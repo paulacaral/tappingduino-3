@@ -359,6 +359,43 @@
 <vertex x="19.25" y="40.5"/>
 <vertex x="19.25" y="44"/>
 </polygon>
+<polygon width="0.1524" layer="42">
+<vertex x="38.25" y="0.75"/>
+<vertex x="45.25" y="0.75"/>
+<vertex x="45.25" y="4.25"/>
+<vertex x="38.25" y="4.25"/>
+</polygon>
+<polygon width="0.1524" layer="42">
+<vertex x="71.75" y="4.25"/>
+<vertex x="71.75" y="0.5"/>
+<vertex x="83" y="0.5"/>
+<vertex x="83" y="4.25"/>
+</polygon>
+<polygon width="0.1524" layer="42">
+<vertex x="91.75" y="5.75"/>
+<vertex x="96" y="5.75"/>
+<vertex x="96" y="17"/>
+<vertex x="91.75" y="17"/>
+</polygon>
+<polygon width="0.1524" layer="42">
+<vertex x="91.75" y="32.25"/>
+<vertex x="91.75" y="21.25"/>
+<vertex x="92" y="21"/>
+<vertex x="96" y="21"/>
+<vertex x="96" y="32.25"/>
+</polygon>
+<polygon width="0.1524" layer="42">
+<vertex x="27" y="52.75"/>
+<vertex x="27" y="49"/>
+<vertex x="41" y="49"/>
+<vertex x="41" y="52.75"/>
+</polygon>
+<polygon width="0.1524" layer="42">
+<vertex x="43.75" y="52.75"/>
+<vertex x="43.75" y="49"/>
+<vertex x="60.25" y="49"/>
+<vertex x="60.25" y="52.75"/>
+</polygon>
 </plain>
 <libraries>
 <library name="linear" urn="urn:adsk.eagle:library:262">
