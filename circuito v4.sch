@@ -10936,6 +10936,36 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <sheets>
 <sheet>
 <plain>
+<wire x1="-27.94" y1="106.68" x2="-27.94" y2="63.5" width="0.1524" layer="150"/>
+<wire x1="-27.94" y1="63.5" x2="22.86" y2="63.5" width="0.1524" layer="150"/>
+<wire x1="22.86" y1="63.5" x2="22.86" y2="106.68" width="0.1524" layer="150"/>
+<wire x1="22.86" y1="106.68" x2="-27.94" y2="106.68" width="0.1524" layer="150"/>
+<text x="-10.16" y="109.22" size="1.778" layer="150">Tierra virtual</text>
+<wire x1="-30.48" y1="30.48" x2="35.56" y2="30.48" width="0.1524" layer="150"/>
+<wire x1="35.56" y1="30.48" x2="35.56" y2="-121.92" width="0.1524" layer="150"/>
+<wire x1="35.56" y1="-121.92" x2="-30.48" y2="-121.92" width="0.1524" layer="150"/>
+<wire x1="-30.48" y1="-121.92" x2="-30.48" y2="30.48" width="0.1524" layer="150"/>
+<text x="-22.86" y="33.02" size="1.778" layer="150">Rama derecha de audio</text>
+<wire x1="43.18" y1="30.48" x2="43.18" y2="-121.92" width="0.1524" layer="150"/>
+<wire x1="43.18" y1="-121.92" x2="114.3" y2="-121.92" width="0.1524" layer="150"/>
+<wire x1="114.3" y1="-121.92" x2="114.3" y2="30.48" width="0.1524" layer="150"/>
+<wire x1="114.3" y1="30.48" x2="43.18" y2="30.48" width="0.1524" layer="150"/>
+<text x="73.66" y="33.02" size="1.778" layer="150">Rama izquierda del audio</text>
+<wire x1="-91.44" y1="60.96" x2="-91.44" y2="2.54" width="0.1524" layer="150"/>
+<wire x1="-91.44" y1="2.54" x2="-40.64" y2="2.54" width="0.1524" layer="150"/>
+<wire x1="-40.64" y1="2.54" x2="-40.64" y2="60.96" width="0.1524" layer="150"/>
+<wire x1="-40.64" y1="60.96" x2="-91.44" y2="60.96" width="0.1524" layer="150"/>
+<text x="-78.74" y="63.5" size="1.778" layer="150">LEDs y sincronizacion</text>
+<wire x1="-40.64" y1="-2.54" x2="-91.44" y2="-2.54" width="0.1524" layer="150"/>
+<wire x1="-91.44" y1="-2.54" x2="-91.44" y2="-63.5" width="0.1524" layer="150"/>
+<wire x1="-91.44" y1="-63.5" x2="-40.64" y2="-63.5" width="0.1524" layer="150"/>
+<wire x1="-40.64" y1="-2.54" x2="-40.64" y2="-63.5" width="0.1524" layer="150"/>
+<text x="-73.66" y="-2.54" size="1.778" layer="150">Conexion Servos</text>
+<wire x1="-43.18" y1="-86.36" x2="-96.52" y2="-86.36" width="0.1524" layer="150"/>
+<wire x1="-96.52" y1="-86.36" x2="-96.52" y2="-152.4" width="0.1524" layer="150"/>
+<wire x1="-96.52" y1="-152.4" x2="-43.18" y2="-152.4" width="0.1524" layer="150"/>
+<wire x1="-43.18" y1="-152.4" x2="-43.18" y2="-86.36" width="0.1524" layer="150"/>
+<text x="-76.2" y="-86.36" size="1.778" layer="150">FSR (izq y der)</text>
 </plain>
 <instances>
 <instance part="IC1" gate="A" x="7.62" y="78.74" smashed="yes">
@@ -11074,9 +11104,9 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <attribute name="NAME" x="95.885" y="-113.03" size="1.778" layer="95" rot="MR270"/>
 <attribute name="VALUE" x="104.14" y="-113.03" size="1.778" layer="96" rot="MR270"/>
 </instance>
-<instance part="PHONES" gate="G$1" x="38.1" y="43.18" smashed="yes" rot="R180">
-<attribute name="NAME" x="40.64" y="36.83" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="40.64" y="50.8" size="1.778" layer="96" rot="R180"/>
+<instance part="PHONES" gate="G$1" x="33.02" y="43.18" smashed="yes" rot="R180">
+<attribute name="NAME" x="35.56" y="36.83" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="35.56" y="50.8" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="SCH1" gate="-1" x="-55.88" y="35.56" smashed="yes" rot="R180">
 <attribute name="NAME" x="-55.372" y="34.544" size="1.778" layer="95"/>
@@ -11201,20 +11231,20 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <instance part="P+2" gate="VCC" x="-91.44" y="-119.38" smashed="yes" rot="R90">
 <attribute name="VALUE" x="-88.9" y="-121.92" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PINGND1" gate="G$1" x="-38.1" y="-154.94" smashed="yes" rot="MR270">
-<attribute name="NAME" x="-41.275" y="-148.59" size="1.778" layer="95" rot="MR270"/>
-<attribute name="VALUE" x="-33.02" y="-148.59" size="1.778" layer="96" rot="MR270"/>
+<instance part="PINGND1" gate="G$1" x="-38.1" y="-165.1" smashed="yes" rot="MR270">
+<attribute name="NAME" x="-41.275" y="-158.75" size="1.778" layer="95" rot="MR270"/>
+<attribute name="VALUE" x="-33.02" y="-158.75" size="1.778" layer="96" rot="MR270"/>
 </instance>
 <instance part="GND1" gate="1" x="-35.56" y="-144.78" smashed="yes" rot="MR270">
 <attribute name="VALUE" x="-33.02" y="-142.24" size="1.778" layer="96" rot="MR270"/>
 </instance>
-<instance part="PINGND2" gate="G$1" x="-48.26" y="-154.94" smashed="yes" rot="MR270">
-<attribute name="NAME" x="-51.435" y="-148.59" size="1.778" layer="95" rot="MR270"/>
-<attribute name="VALUE" x="-43.18" y="-148.59" size="1.778" layer="96" rot="MR270"/>
+<instance part="PINGND2" gate="G$1" x="-48.26" y="-165.1" smashed="yes" rot="MR270">
+<attribute name="NAME" x="-51.435" y="-158.75" size="1.778" layer="95" rot="MR270"/>
+<attribute name="VALUE" x="-43.18" y="-158.75" size="1.778" layer="96" rot="MR270"/>
 </instance>
-<instance part="PINGND3" gate="G$1" x="-55.88" y="-154.94" smashed="yes" rot="MR270">
-<attribute name="NAME" x="-59.055" y="-148.59" size="1.778" layer="95" rot="MR270"/>
-<attribute name="VALUE" x="-50.8" y="-148.59" size="1.778" layer="96" rot="MR270"/>
+<instance part="PINGND3" gate="G$1" x="-55.88" y="-165.1" smashed="yes" rot="MR270">
+<attribute name="NAME" x="-59.055" y="-158.75" size="1.778" layer="95" rot="MR270"/>
+<attribute name="VALUE" x="-50.8" y="-158.75" size="1.778" layer="96" rot="MR270"/>
 </instance>
 <instance part="PINVACIO3" gate="G$1" x="10.16" y="-139.7" smashed="yes" rot="MR180">
 <attribute name="NAME" x="3.81" y="-142.875" size="1.778" layer="95" rot="MR180"/>
@@ -11321,16 +11351,16 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <wire x1="-38.1" y1="-144.78" x2="-38.1" y2="-109.22" width="0.1524" layer="91"/>
 <pinref part="PINGND1" gate="G$1" pin="1"/>
 <wire x1="-38.1" y1="-109.22" x2="-38.1" y2="-22.86" width="0.1524" layer="91"/>
-<wire x1="-38.1" y1="-144.78" x2="-38.1" y2="-152.4" width="0.1524" layer="91"/>
+<wire x1="-38.1" y1="-144.78" x2="-38.1" y2="-162.56" width="0.1524" layer="91"/>
 <pinref part="GND1" gate="1" pin="GND"/>
 <pinref part="PINGND3" gate="G$1" pin="1"/>
-<wire x1="-55.88" y1="-152.4" x2="-55.88" y2="-147.32" width="0.1524" layer="91"/>
-<wire x1="-55.88" y1="-147.32" x2="-48.26" y2="-147.32" width="0.1524" layer="91"/>
-<wire x1="-48.26" y1="-147.32" x2="-48.26" y2="-144.78" width="0.1524" layer="91"/>
+<wire x1="-55.88" y1="-162.56" x2="-55.88" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-55.88" y1="-154.94" x2="-48.26" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-48.26" y1="-154.94" x2="-48.26" y2="-144.78" width="0.1524" layer="91"/>
 <pinref part="PINGND2" gate="G$1" pin="1"/>
-<wire x1="-48.26" y1="-147.32" x2="-48.26" y2="-152.4" width="0.1524" layer="91"/>
+<wire x1="-48.26" y1="-154.94" x2="-48.26" y2="-162.56" width="0.1524" layer="91"/>
 <junction x="-48.26" y="-144.78"/>
-<junction x="-48.26" y="-147.32"/>
+<junction x="-48.26" y="-154.94"/>
 <pinref part="IC1" gate="P" pin="V-"/>
 <wire x1="7.62" y1="71.12" x2="7.62" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="7.62" y1="66.04" x2="-7.62" y2="66.04" width="0.1524" layer="91"/>
@@ -11625,7 +11655,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <net name="N$30" class="0">
 <segment>
 <pinref part="PHONES" gate="G$1" pin="2"/>
-<wire x1="43.18" y1="45.72" x2="45.72" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="45.72" x2="45.72" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="45.72" x2="45.72" y2="20.32" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="20.32" x2="50.8" y2="20.32" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="C" pin="OUT"/>
@@ -11639,13 +11669,13 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <net name="N$37" class="0">
 <segment>
 <pinref part="PHONES" gate="G$1" pin="3"/>
-<wire x1="43.18" y1="38.1" x2="43.18" y2="20.32" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="38.1" x2="38.1" y2="20.32" width="0.1524" layer="91"/>
 <pinref part="R3" gate="/1" pin="A"/>
 <pinref part="IC1" gate="B" pin="OUT"/>
 <wire x1="30.48" y1="20.32" x2="33.02" y2="20.32" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="20.32" x2="33.02" y2="7.62" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="7.62" x2="17.78" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="20.32" x2="33.02" y2="20.32" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="20.32" x2="33.02" y2="20.32" width="0.1524" layer="91"/>
 <junction x="33.02" y="20.32"/>
 </segment>
 </net>
@@ -11656,13 +11686,13 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <pinref part="IC1" gate="A" pin="OUT"/>
 <wire x1="15.24" y1="78.74" x2="17.78" y2="78.74" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="A" pin="-IN"/>
-<wire x1="17.78" y1="78.74" x2="43.18" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="78.74" x2="38.1" y2="78.74" width="0.1524" layer="91"/>
 <wire x1="0" y1="76.2" x2="0" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="0" y1="68.58" x2="17.78" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="17.78" y1="68.58" x2="17.78" y2="78.74" width="0.1524" layer="91"/>
 <junction x="17.78" y="78.74"/>
-<wire x1="43.18" y1="78.74" x2="43.18" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="60.96" x2="5.08" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="78.74" x2="38.1" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="60.96" x2="5.08" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="5.08" y1="60.96" x2="5.08" y2="22.86" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="B" pin="+IN"/>
 <pinref part="R5" gate="G$1" pin="1"/>
@@ -11679,8 +11709,8 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <pinref part="R11" gate="G$1" pin="1"/>
 <wire x1="-15.24" y1="-78.74" x2="-15.24" y2="-81.28" width="0.1524" layer="91"/>
 <junction x="-25.4" y="-33.02"/>
-<wire x1="43.18" y1="60.96" x2="109.22" y2="60.96" width="0.1524" layer="91"/>
-<junction x="43.18" y="60.96"/>
+<wire x1="38.1" y1="60.96" x2="109.22" y2="60.96" width="0.1524" layer="91"/>
+<junction x="38.1" y="60.96"/>
 <wire x1="109.22" y1="60.96" x2="109.22" y2="22.86" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="C" pin="+IN"/>
 <wire x1="66.04" y1="22.86" x2="99.06" y2="22.86" width="0.1524" layer="91"/>
@@ -11692,7 +11722,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <junction x="109.22" y="22.86"/>
 <pinref part="PHONES" gate="G$1" pin="1"/>
 <wire x1="109.22" y1="-33.02" x2="109.22" y2="-78.74" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="48.26" x2="43.18" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="48.26" x2="38.1" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="R19" gate="G$1" pin="1"/>
 <wire x1="99.06" y1="-78.74" x2="99.06" y2="-81.28" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="-78.74" x2="109.22" y2="-78.74" width="0.1524" layer="91"/>
