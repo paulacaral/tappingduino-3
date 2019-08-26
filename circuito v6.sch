@@ -10916,7 +10916,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 </pinmapping>
 </spice>
 </part>
-<part name="PIN2" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
+<part name="PIN5" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
 <part name="R8" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
@@ -10943,7 +10943,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 </pinmapping>
 </spice>
 </part>
-<part name="PIN13" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
+<part name="PIN12" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
 <part name="R11" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
@@ -10989,7 +10989,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 </pinmapping>
 </spice>
 </part>
-<part name="PIN5" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
+<part name="PIN2" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
 <part name="R16" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
@@ -11016,7 +11016,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 </pinmapping>
 </spice>
 </part>
-<part name="PIN9" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
+<part name="PIN11" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
 <part name="R19" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
@@ -11035,7 +11035,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 </pinmapping>
 </spice>
 </part>
-<part name="PIN12" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
+<part name="PIN9" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
 <part name="PHONES" library="con-lumberg" library_urn="urn:adsk.eagle:library:163" deviceset="1503_09" device="" package3d_urn="urn:adsk.eagle:package:8555/1">
@@ -11212,6 +11212,21 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <wire x1="-96.52" y1="-152.4" x2="-43.18" y2="-152.4" width="0.1524" layer="150"/>
 <wire x1="-43.18" y1="-152.4" x2="-43.18" y2="-86.36" width="0.1524" layer="150"/>
 <text x="-76.2" y="-86.36" size="1.778" layer="150">FSR (izq y der)</text>
+<wire x1="-27.94" y1="25.4" x2="-27.94" y2="-30.48" width="0.1524" layer="150"/>
+<wire x1="-27.94" y1="-30.48" x2="5.08" y2="-30.48" width="0.1524" layer="150"/>
+<wire x1="5.08" y1="-30.48" x2="5.08" y2="25.4" width="0.1524" layer="150"/>
+<wire x1="5.08" y1="25.4" x2="-27.94" y2="25.4" width="0.1524" layer="150"/>
+<text x="7.62" y="-22.86" size="1.778" layer="150" rot="R90">Feedback con switch</text>
+<wire x1="-27.94" y1="-33.02" x2="-27.94" y2="-76.2" width="0.1524" layer="150"/>
+<wire x1="-27.94" y1="-76.2" x2="5.08" y2="-76.2" width="0.1524" layer="150"/>
+<wire x1="5.08" y1="-76.2" x2="5.08" y2="-33.02" width="0.1524" layer="150"/>
+<wire x1="5.08" y1="-33.02" x2="-27.94" y2="-33.02" width="0.1524" layer="150"/>
+<text x="7.62" y="-55.88" size="1.778" layer="150" rot="R90">Estimulo</text>
+<wire x1="-27.94" y1="-78.74" x2="-27.94" y2="-119.38" width="0.1524" layer="150"/>
+<wire x1="-27.94" y1="-119.38" x2="5.08" y2="-119.38" width="0.1524" layer="150"/>
+<wire x1="5.08" y1="-119.38" x2="5.08" y2="-78.74" width="0.1524" layer="150"/>
+<wire x1="5.08" y1="-78.74" x2="-27.94" y2="-78.74" width="0.1524" layer="150"/>
+<text x="7.62" y="-106.68" size="1.778" layer="150" rot="R90">Ruido blanco</text>
 </plain>
 <instances>
 <instance part="IC1" gate="A" x="7.62" y="78.74" smashed="yes">
@@ -11270,7 +11285,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <attribute name="NAME" x="-1.27" y="8.6614" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="-1.27" y="13.462" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PIN2" gate="G$1" x="-12.7" y="-27.94" smashed="yes" rot="R270">
+<instance part="PIN5" gate="G$1" x="-12.7" y="-27.94" smashed="yes" rot="R270">
 <attribute name="NAME" x="-9.525" y="-21.59" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="-17.78" y="-21.59" size="1.778" layer="96" rot="R270"/>
 </instance>
@@ -11286,7 +11301,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <attribute name="NAME" x="-3.81" y="-49.7586" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="-3.81" y="-44.958" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PIN13" gate="G$1" x="-15.24" y="-73.66" smashed="yes" rot="R270">
+<instance part="PIN12" gate="G$1" x="-15.24" y="-73.66" smashed="yes" rot="R270">
 <attribute name="NAME" x="-12.065" y="-67.31" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="-20.32" y="-67.31" size="1.778" layer="96" rot="R270"/>
 </instance>
@@ -11314,7 +11329,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <attribute name="NAME" x="87.63" y="11.6586" size="1.778" layer="95"/>
 <attribute name="VALUE" x="87.63" y="6.858" size="1.778" layer="96"/>
 </instance>
-<instance part="PIN5" gate="G$1" x="96.52" y="-27.94" smashed="yes" rot="R270">
+<instance part="PIN2" gate="G$1" x="96.52" y="-27.94" smashed="yes" rot="R270">
 <attribute name="NAME" x="99.695" y="-21.59" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="91.44" y="-21.59" size="1.778" layer="96" rot="R270"/>
 </instance>
@@ -11330,7 +11345,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <attribute name="NAME" x="87.63" y="-49.7586" size="1.778" layer="95" rot="MR180"/>
 <attribute name="VALUE" x="87.63" y="-44.958" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="PIN9" gate="G$1" x="99.06" y="-73.66" smashed="yes" rot="R270">
+<instance part="PIN11" gate="G$1" x="99.06" y="-73.66" smashed="yes" rot="R270">
 <attribute name="NAME" x="102.235" y="-67.31" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="93.98" y="-67.31" size="1.778" layer="96" rot="R270"/>
 </instance>
@@ -11342,7 +11357,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <attribute name="NAME" x="100.5586" y="-107.95" size="1.778" layer="95" rot="MR90"/>
 <attribute name="VALUE" x="95.758" y="-107.95" size="1.778" layer="96" rot="MR90"/>
 </instance>
-<instance part="PIN12" gate="G$1" x="99.06" y="-119.38" smashed="yes" rot="MR270">
+<instance part="PIN9" gate="G$1" x="99.06" y="-119.38" smashed="yes" rot="MR270">
 <attribute name="NAME" x="95.885" y="-113.03" size="1.778" layer="95" rot="MR270"/>
 <attribute name="VALUE" x="104.14" y="-113.03" size="1.778" layer="96" rot="MR270"/>
 </instance>
@@ -11688,7 +11703,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 </net>
 <net name="N$7" class="0">
 <segment>
-<pinref part="PIN2" gate="G$1" pin="1"/>
+<pinref part="PIN5" gate="G$1" pin="1"/>
 <wire x1="-12.7" y1="-17.78" x2="-12.7" y2="-25.4" width="0.1524" layer="91"/>
 <pinref part="S2" gate="1" pin="O"/>
 </segment>
@@ -11707,7 +11722,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <net name="N$3" class="0">
 <segment>
 <pinref part="R9" gate="G$1" pin="1"/>
-<pinref part="PIN13" gate="G$1" pin="1"/>
+<pinref part="PIN12" gate="G$1" pin="1"/>
 <wire x1="-15.24" y1="-63.5" x2="-15.24" y2="-71.12" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -11769,7 +11784,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 </net>
 <net name="N$16" class="0">
 <segment>
-<pinref part="PIN5" gate="G$1" pin="1"/>
+<pinref part="PIN2" gate="G$1" pin="1"/>
 <wire x1="96.52" y1="-17.78" x2="96.52" y2="-25.4" width="0.1524" layer="91"/>
 <pinref part="S3" gate="1" pin="O"/>
 </segment>
@@ -11788,7 +11803,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <net name="N$20" class="0">
 <segment>
 <pinref part="R17" gate="G$1" pin="1"/>
-<pinref part="PIN9" gate="G$1" pin="1"/>
+<pinref part="PIN11" gate="G$1" pin="1"/>
 <wire x1="99.06" y1="-63.5" x2="99.06" y2="-71.12" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -11796,7 +11811,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <segment>
 <pinref part="R20" gate="G$1" pin="1"/>
 <wire x1="99.06" y1="-109.22" x2="99.06" y2="-116.84" width="0.1524" layer="91"/>
-<pinref part="PIN12" gate="G$1" pin="1"/>
+<pinref part="PIN9" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$18" class="0">
@@ -11996,12 +12011,12 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <approved hash="114,1,8.02392,78.7713,IC1,D,+IN,,,"/>
 <approved hash="104,1,7.62,86.36,IC1P,V+,VCC,,,"/>
 <approved hash="104,1,7.62,71.12,IC1P,V-,GND,,,"/>
-<approved hash="113,1,-11.2039,-25.6371,PIN2,,,,,"/>
-<approved hash="113,1,-13.7439,-71.3571,PIN13,,,,,"/>
+<approved hash="113,1,-11.2039,-25.6371,PIN5,,,,,"/>
+<approved hash="113,1,-13.7439,-71.3571,PIN12,,,,,"/>
 <approved hash="113,1,-13.7439,-117.077,PIN10,,,,,"/>
-<approved hash="113,1,98.0161,-25.6371,PIN5,,,,,"/>
-<approved hash="113,1,100.556,-71.3571,PIN9,,,,,"/>
-<approved hash="113,1,97.5639,-117.077,PIN12,,,,,"/>
+<approved hash="113,1,98.0161,-25.6371,PIN2,,,,,"/>
+<approved hash="113,1,100.556,-71.3571,PIN11,,,,,"/>
+<approved hash="113,1,97.5639,-117.077,PIN9,,,,,"/>
 <approved hash="113,1,-55.5033,35.56,SCH1,,,,,"/>
 <approved hash="113,1,-68.8171,41.6839,PIN42,,,,,"/>
 <approved hash="113,1,-68.8171,34.0639,PIN40,,,,,"/>
