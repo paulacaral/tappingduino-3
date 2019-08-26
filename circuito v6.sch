@@ -10073,17 +10073,23 @@ Source: http://www.alphapotentiometers.net/html/16mm_pot_2.html</description>
 Marquardt, Siemens, C&amp;K, ITT, and others&lt;p&gt;
 &lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
 <packages>
-<package name="320-916" urn="urn:adsk.eagle:footprint:27534/1" library_version="1">
+<package name="320-938" urn="urn:adsk.eagle:footprint:27541/1" library_version="2">
 <description>&lt;b&gt;TOGGLE SWITCH&lt;/b&gt;&lt;p&gt;
 distributor RS Components</description>
-<wire x1="-2.8702" y1="6.6802" x2="-3.5052" y2="6.0452" width="0.1524" layer="21"/>
-<wire x1="-2.8702" y1="6.6802" x2="2.8702" y2="6.6802" width="0.1524" layer="21"/>
-<wire x1="3.5052" y1="6.0452" x2="2.8702" y2="6.6802" width="0.1524" layer="21"/>
-<wire x1="2.8702" y1="-6.6802" x2="3.5052" y2="-6.0452" width="0.1524" layer="21"/>
-<wire x1="2.8702" y1="-6.6802" x2="-2.8702" y2="-6.6802" width="0.1524" layer="21"/>
-<wire x1="-3.5052" y1="-6.0452" x2="-2.8702" y2="-6.6802" width="0.1524" layer="21"/>
-<wire x1="4.318" y1="2.286" x2="4.318" y2="-2.286" width="0.1524" layer="21"/>
-<wire x1="-4.318" y1="2.286" x2="-4.318" y2="-2.286" width="0.1524" layer="21"/>
+<wire x1="-5.4102" y1="6.6802" x2="-6.0452" y2="6.0452" width="0.1524" layer="21"/>
+<wire x1="-5.4102" y1="6.6802" x2="5.4102" y2="6.6802" width="0.1524" layer="21"/>
+<wire x1="6.0452" y1="6.0452" x2="5.4102" y2="6.6802" width="0.1524" layer="21"/>
+<wire x1="5.4102" y1="-6.6802" x2="6.0452" y2="-6.0452" width="0.1524" layer="21"/>
+<wire x1="5.4102" y1="-6.6802" x2="-5.4102" y2="-6.6802" width="0.1524" layer="21"/>
+<wire x1="-6.0452" y1="-6.0452" x2="-5.4102" y2="-6.6802" width="0.1524" layer="21"/>
+<wire x1="6.0452" y1="6.0452" x2="6.0452" y2="-6.0452" width="0.1524" layer="21"/>
+<wire x1="-6.0452" y1="-6.0452" x2="-6.0452" y2="6.0452" width="0.1524" layer="21"/>
+<wire x1="4.318" y1="2.286" x2="4.318" y2="-2.286" width="0.1524" layer="51"/>
+<wire x1="-4.318" y1="2.286" x2="-4.318" y2="-2.286" width="0.1524" layer="51"/>
+<wire x1="4.318" y1="2.286" x2="0" y2="5.08" width="0.1524" layer="51"/>
+<wire x1="0" y1="5.08" x2="-4.318" y2="2.286" width="0.1524" layer="51"/>
+<wire x1="-4.318" y1="-2.286" x2="0" y2="-5.08" width="0.1524" layer="51"/>
+<wire x1="0" y1="-5.08" x2="4.318" y2="-2.286" width="0.1524" layer="51"/>
 <wire x1="1.905" y1="-1.27" x2="2.54" y2="-1.905" width="0.1524" layer="51"/>
 <wire x1="2.54" y1="-1.905" x2="2.54" y2="-2.54" width="0.1524" layer="51"/>
 <wire x1="1.905" y1="-3.175" x2="2.54" y2="-2.54" width="0.1524" layer="51"/>
@@ -10093,40 +10099,46 @@ distributor RS Components</description>
 <wire x1="-1.905" y1="-1.27" x2="-2.54" y2="-1.905" width="0.1524" layer="51"/>
 <wire x1="-1.905" y1="-1.27" x2="1.905" y2="-1.27" width="0.1524" layer="51"/>
 <wire x1="1.6002" y1="1.27" x2="2.54" y2="-1.905" width="0.1524" layer="51"/>
-<wire x1="3.5052" y1="-6.0452" x2="3.5052" y2="-2.8702" width="0.1524" layer="21"/>
-<wire x1="3.5052" y1="6.0452" x2="3.5052" y2="2.8702" width="0.1524" layer="21"/>
-<wire x1="-3.5052" y1="2.8702" x2="-3.5052" y2="6.0452" width="0.1524" layer="21"/>
-<wire x1="-3.5052" y1="-6.0452" x2="-3.5052" y2="-2.8194" width="0.1524" layer="21"/>
 <wire x1="-1.6002" y1="1.27" x2="-2.54" y2="-1.905" width="0.1524" layer="51"/>
 <wire x1="-2.54" y1="-2.54" x2="2.54" y2="-2.54" width="0.1524" layer="51" curve="-270"/>
 <wire x1="-2.54" y1="-1.27" x2="2.54" y2="-1.27" width="0.1524" layer="51" curve="-233.130102"/>
 <wire x1="-1.6002" y1="1.27" x2="1.6002" y2="1.27" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="-2.286" x2="-3.5052" y2="-2.8194" width="0.1524" layer="21"/>
-<wire x1="-3.5052" y1="-2.8194" x2="0" y2="-5.08" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="-2.286" x2="3.5052" y2="-2.8702" width="0.1524" layer="21"/>
-<wire x1="3.5052" y1="-2.8702" x2="0" y2="-5.08" width="0.1524" layer="51"/>
-<wire x1="4.318" y1="2.286" x2="3.5052" y2="2.8702" width="0.1524" layer="21"/>
-<wire x1="3.5052" y1="2.8702" x2="0" y2="5.08" width="0.1524" layer="51"/>
-<wire x1="-4.318" y1="2.286" x2="-3.5052" y2="2.8702" width="0.1524" layer="21"/>
-<wire x1="-3.5052" y1="2.8702" x2="0" y2="5.08" width="0.1524" layer="51"/>
-<pad name="3" x="0" y="-4.0132" drill="2.0066" shape="long"/>
-<pad name="2" x="0" y="0" drill="2.0066" shape="long"/>
-<pad name="1" x="0" y="4.0132" drill="2.0066" shape="long"/>
-<text x="-2.54" y="7.62" size="1.778" layer="25" ratio="10">&gt;NAME</text>
-<text x="-2.54" y="-9.525" size="1.778" layer="27" ratio="10">&gt;VALUE</text>
+<pad name="3" x="-2.3876" y="-4.0132" drill="2.0066" shape="octagon"/>
+<pad name="2" x="-2.3876" y="0" drill="2.0066" shape="octagon"/>
+<pad name="1" x="-2.3876" y="4.0132" drill="2.0066" shape="octagon"/>
+<pad name="4" x="2.3876" y="4.0132" drill="2.0066" shape="octagon"/>
+<pad name="5" x="2.3876" y="0" drill="2.0066" shape="octagon"/>
+<pad name="6" x="2.3876" y="-4.0132" drill="2.0066" shape="octagon"/>
+<text x="-5.08" y="7.62" size="1.778" layer="25" ratio="10">&gt;NAME</text>
+<text x="-5.08" y="-9.525" size="1.778" layer="27" ratio="10">&gt;VALUE</text>
 </package>
 </packages>
 <packages3d>
-<package3d name="320-916" urn="urn:adsk.eagle:package:27678/1" type="box" library_version="1">
+<package3d name="320-938" urn="urn:adsk.eagle:package:27685/1" type="box" library_version="2">
 <description>TOGGLE SWITCH
 distributor RS Components</description>
 <packageinstances>
-<packageinstance name="320-916"/>
+<packageinstance name="320-938"/>
 </packageinstances>
 </package3d>
 </packages3d>
 <symbols>
-<symbol name="KS-U" urn="urn:adsk.eagle:symbol:27532/1" library_version="1">
+<symbol name="U2" urn="urn:adsk.eagle:symbol:27530/1" library_version="2">
+<wire x1="0" y1="-3.175" x2="0" y2="-1.905" width="0.254" layer="94"/>
+<wire x1="0" y1="-1.905" x2="-1.905" y2="3.175" width="0.254" layer="94"/>
+<wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.254" layer="94"/>
+<wire x1="2.54" y1="2.54" x2="2.54" y2="3.175" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="2.54" x2="-1.27" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="2.54" x2="-2.54" y2="3.175" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="0" x2="-1.27" y2="0" width="0.1524" layer="94"/>
+<wire x1="-1.905" y1="0" x2="-2.54" y2="0" width="0.1524" layer="94"/>
+<wire x1="-3.175" y1="0" x2="-3.81" y2="0" width="0.1524" layer="94"/>
+<text x="5.08" y="-1.905" size="1.778" layer="95" rot="R90">&gt;PART</text>
+<pin name="P" x="0" y="-5.08" visible="pad" length="short" direction="pas" rot="R90"/>
+<pin name="S" x="2.54" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
+<pin name="O" x="-2.54" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
+</symbol>
+<symbol name="KS-U-" urn="urn:adsk.eagle:symbol:27540/1" library_version="2">
 <wire x1="-3.81" y1="1.905" x2="-2.54" y2="1.905" width="0.254" layer="94"/>
 <wire x1="-3.81" y1="1.905" x2="-3.81" y2="0" width="0.254" layer="94"/>
 <wire x1="-3.81" y1="0" x2="-1.905" y2="0" width="0.1524" layer="94"/>
@@ -10143,29 +10155,36 @@ distributor RS Components</description>
 <wire x1="0" y1="2.54" x2="0" y2="3.175" width="0.254" layer="94"/>
 <wire x1="-0.762" y1="0" x2="-0.254" y2="-0.762" width="0.1524" layer="94"/>
 <wire x1="-0.254" y1="-0.762" x2="0.254" y2="0" width="0.1524" layer="94"/>
-<text x="-6.35" y="-1.905" size="1.778" layer="95" rot="R90">&gt;NAME</text>
+<wire x1="1.905" y1="0" x2="2.413" y2="0" width="0.1524" layer="94"/>
+<wire x1="3.175" y1="0" x2="3.683" y2="0" width="0.1524" layer="94"/>
+<wire x1="4.445" y1="0" x2="4.953" y2="0" width="0.1524" layer="94"/>
 <text x="-3.81" y="2.54" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
+<text x="-6.35" y="-1.905" size="1.778" layer="95" rot="R90">&gt;PART</text>
 <pin name="P" x="2.54" y="-5.08" visible="pad" length="short" direction="pas" rot="R90"/>
 <pin name="S" x="5.08" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
 <pin name="O" x="0" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="320-916" urn="urn:adsk.eagle:component:27763/1" prefix="S" uservalue="yes" library_version="1">
+<deviceset name="320-938" urn="urn:adsk.eagle:component:27767/1" prefix="S" uservalue="yes" library_version="2">
 <description>&lt;b&gt;TOGGLE SWITCH&lt;/b&gt;&lt;p&gt;
 distributor RS Components</description>
 <gates>
-<gate name="1" symbol="KS-U" x="-2.54" y="0"/>
+<gate name="B" symbol="U2" x="12.7" y="0" addlevel="always"/>
+<gate name="1" symbol="KS-U-" x="0" y="0" addlevel="must"/>
 </gates>
 <devices>
-<device name="" package="320-916">
+<device name="" package="320-938">
 <connects>
 <connect gate="1" pin="O" pad="1"/>
 <connect gate="1" pin="P" pad="2"/>
 <connect gate="1" pin="S" pad="3"/>
+<connect gate="B" pin="O" pad="4"/>
+<connect gate="B" pin="P" pad="5"/>
+<connect gate="B" pin="S" pad="6"/>
 </connects>
 <package3dinstances>
-<package3dinstance package3d_urn="urn:adsk.eagle:package:27678/1"/>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:27685/1"/>
 </package3dinstances>
 <technologies>
 <technology name=""/>
@@ -11172,12 +11191,7 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <part name="PINVACIO8" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
-<part name="S2" library="switch" library_urn="urn:adsk.eagle:library:380" deviceset="320-916" device="" package3d_urn="urn:adsk.eagle:package:27678/1">
-<attribute name="SPICEPREFIX" value="J"/>
-</part>
-<part name="S3" library="switch" library_urn="urn:adsk.eagle:library:380" deviceset="320-916" device="" package3d_urn="urn:adsk.eagle:package:27678/1">
-<attribute name="SPICEPREFIX" value="J"/>
-</part>
+<part name="S1" library="switch" library_urn="urn:adsk.eagle:library:380" deviceset="320-938" device="" package3d_urn="urn:adsk.eagle:package:27685/1"/>
 </parts>
 <sheets>
 <sheet>
@@ -11329,9 +11343,9 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <attribute name="NAME" x="87.63" y="11.6586" size="1.778" layer="95"/>
 <attribute name="VALUE" x="87.63" y="6.858" size="1.778" layer="96"/>
 </instance>
-<instance part="PIN2" gate="G$1" x="96.52" y="-27.94" smashed="yes" rot="R270">
-<attribute name="NAME" x="99.695" y="-21.59" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="91.44" y="-21.59" size="1.778" layer="96" rot="R270"/>
+<instance part="PIN2" gate="G$1" x="101.6" y="-27.94" smashed="yes" rot="R270">
+<attribute name="NAME" x="104.775" y="-21.59" size="1.778" layer="95" rot="R270"/>
+<attribute name="VALUE" x="96.52" y="-21.59" size="1.778" layer="96" rot="R270"/>
 </instance>
 <instance part="R16" gate="G$1" x="99.06" y="-40.64" smashed="yes" rot="MR270">
 <attribute name="NAME" x="97.5614" y="-36.83" size="1.778" layer="95" rot="MR270"/>
@@ -11535,13 +11549,12 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <attribute name="NAME" x="-11.43" y="-136.525" size="1.778" layer="95"/>
 <attribute name="VALUE" x="-11.43" y="-144.78" size="1.778" layer="96"/>
 </instance>
-<instance part="S2" gate="1" x="-12.7" y="-12.7" smashed="yes" rot="R180">
-<attribute name="NAME" x="-6.35" y="-10.795" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="-8.89" y="-15.24" size="1.778" layer="96" rot="R270"/>
+<instance part="S1" gate="B" x="-15.24" y="-12.7" smashed="yes" rot="R180">
+<attribute name="PART" x="-20.32" y="-10.795" size="1.778" layer="95" rot="R270"/>
 </instance>
-<instance part="S3" gate="1" x="96.52" y="-12.7" smashed="yes" rot="MR180">
-<attribute name="NAME" x="90.17" y="-10.795" size="1.778" layer="95" rot="MR270"/>
-<attribute name="VALUE" x="92.71" y="-15.24" size="1.778" layer="96" rot="MR270"/>
+<instance part="S1" gate="1" x="101.6" y="-12.7" smashed="yes" rot="R180">
+<attribute name="VALUE" x="105.41" y="-15.24" size="1.778" layer="96" rot="R270"/>
+<attribute name="PART" x="107.95" y="-10.795" size="1.778" layer="95" rot="R270"/>
 </instance>
 </instances>
 <busses>
@@ -11694,20 +11707,6 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <junction x="-15.24" y="10.16"/>
 </segment>
 </net>
-<net name="N$6" class="0">
-<segment>
-<pinref part="R6" gate="G$1" pin="1"/>
-<wire x1="-15.24" y1="-7.62" x2="-15.24" y2="-5.08" width="0.1524" layer="91"/>
-<pinref part="S2" gate="1" pin="P"/>
-</segment>
-</net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="PIN5" gate="G$1" pin="1"/>
-<wire x1="-12.7" y1="-17.78" x2="-12.7" y2="-25.4" width="0.1524" layer="91"/>
-<pinref part="S2" gate="1" pin="O"/>
-</segment>
-</net>
 <net name="N$9" class="0">
 <segment>
 <pinref part="R8" gate="G$1" pin="2"/>
@@ -11773,20 +11772,6 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <wire x1="99.06" y1="10.16" x2="99.06" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="10.16" x2="99.06" y2="10.16" width="0.1524" layer="91"/>
 <junction x="99.06" y="10.16"/>
-</segment>
-</net>
-<net name="N$15" class="0">
-<segment>
-<pinref part="R13" gate="G$1" pin="1"/>
-<wire x1="99.06" y1="-5.08" x2="99.06" y2="-7.62" width="0.1524" layer="91"/>
-<pinref part="S3" gate="1" pin="P"/>
-</segment>
-</net>
-<net name="N$16" class="0">
-<segment>
-<pinref part="PIN2" gate="G$1" pin="1"/>
-<wire x1="96.52" y1="-17.78" x2="96.52" y2="-25.4" width="0.1524" layer="91"/>
-<pinref part="S3" gate="1" pin="O"/>
 </segment>
 </net>
 <net name="N$19" class="0">
@@ -11995,6 +11980,34 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <wire x1="-63.5" y1="-139.7" x2="-60.96" y2="-139.7" width="0.1524" layer="91"/>
 </segment>
 </net>
+<net name="N$6" class="0">
+<segment>
+<pinref part="R6" gate="G$1" pin="1"/>
+<pinref part="S1" gate="B" pin="P"/>
+<wire x1="-15.24" y1="-5.08" x2="-15.24" y2="-7.62" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="S1" gate="B" pin="O"/>
+<pinref part="PIN5" gate="G$1" pin="1"/>
+<wire x1="-12.7" y1="-17.78" x2="-12.7" y2="-25.4" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$10" class="0">
+<segment>
+<pinref part="S1" gate="1" pin="P"/>
+<pinref part="R13" gate="G$1" pin="1"/>
+<wire x1="99.06" y1="-7.62" x2="99.06" y2="-5.08" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$15" class="0">
+<segment>
+<pinref part="S1" gate="1" pin="O"/>
+<pinref part="PIN2" gate="G$1" pin="1"/>
+<wire x1="101.6" y1="-17.78" x2="101.6" y2="-25.4" width="0.1524" layer="91"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>
@@ -12011,12 +12024,12 @@ Shiua Chyuan Precision Industrial Co Ltd&lt;br&gt;
 <approved hash="114,1,8.02392,78.7713,IC1,D,+IN,,,"/>
 <approved hash="104,1,7.62,86.36,IC1P,V+,VCC,,,"/>
 <approved hash="104,1,7.62,71.12,IC1P,V-,GND,,,"/>
-<approved hash="113,1,-11.2039,-25.6371,PIN2,,,,,"/>
-<approved hash="113,1,-13.7439,-71.3571,PIN13,,,,,"/>
-<approved hash="113,1,-13.7439,-117.077,PIN10,,,,,"/>
-<approved hash="113,1,98.0161,-25.6371,PIN5,,,,,"/>
-<approved hash="113,1,100.556,-71.3571,PIN9,,,,,"/>
-<approved hash="113,1,97.5639,-117.077,PIN12,,,,,"/>
+<approved hash="113,1,-11.2039,-25.6371,PIN5,,,,,"/>
+<approved hash="113,1,-13.7439,-71.3571,PIN11,,,,,"/>
+<approved hash="113,1,-13.7439,-117.077,PIN9,,,,,"/>
+<approved hash="113,1,98.0161,-25.6371,PIN2,,,,,"/>
+<approved hash="113,1,100.556,-71.3571,PIN12,,,,,"/>
+<approved hash="113,1,97.5639,-117.077,PIN10,,,,,"/>
 <approved hash="113,1,-55.5033,35.56,SCH1,,,,,"/>
 <approved hash="113,1,-68.8171,41.6839,PIN42,,,,,"/>
 <approved hash="113,1,-68.8171,34.0639,PIN40,,,,,"/>
