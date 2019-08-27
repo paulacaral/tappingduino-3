@@ -10911,7 +10911,7 @@ distributor RS Components</description>
 <part name="R4" library="pot" library_urn="urn:adsk.eagle:library:331" deviceset="3RP/1610G" device="" package3d_urn="urn:adsk.eagle:package:22728/1" value="100k">
 <attribute name="SPICEPREFIX" value="J"/>
 </part>
-<part name="R5" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R5" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -10919,7 +10919,7 @@ distributor RS Components</description>
 </pinmapping>
 </spice>
 </part>
-<part name="R6" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R6" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -10938,7 +10938,7 @@ distributor RS Components</description>
 <part name="PIN5" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
-<part name="R8" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R8" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -10946,7 +10946,7 @@ distributor RS Components</description>
 </pinmapping>
 </spice>
 </part>
-<part name="R9" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R9" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -10965,7 +10965,7 @@ distributor RS Components</description>
 <part name="PIN12" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
-<part name="R11" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R11" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -10973,7 +10973,7 @@ distributor RS Components</description>
 </pinmapping>
 </spice>
 </part>
-<part name="R12" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R12" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -10984,7 +10984,7 @@ distributor RS Components</description>
 <part name="PIN10" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
-<part name="R13" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R13" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -10992,7 +10992,7 @@ distributor RS Components</description>
 </pinmapping>
 </spice>
 </part>
-<part name="R14" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R14" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -11011,7 +11011,7 @@ distributor RS Components</description>
 <part name="PIN2" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
-<part name="R16" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R16" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -11019,7 +11019,7 @@ distributor RS Components</description>
 </pinmapping>
 </spice>
 </part>
-<part name="R17" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R17" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -11038,7 +11038,7 @@ distributor RS Components</description>
 <part name="PIN11" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X1" device="" package3d_urn="urn:adsk.eagle:package:22485/2">
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
-<part name="R19" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R19" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
@@ -11046,7 +11046,7 @@ distributor RS Components</description>
 </pinmapping>
 </spice>
 </part>
-<part name="R20" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="100k">
+<part name="R20" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="10k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
