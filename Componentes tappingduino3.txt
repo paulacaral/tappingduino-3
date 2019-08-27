@@ -1,0 +1,65 @@
+Partlist exported from /home/paula/Descargas/tappingduino-3-master/circuito v6-pv.sch at 27/8/19 16:07
+
+Part      Value   Device          Package      Description                                    MF MPN OC_FARNELL OC_NEWARK SPICEMODEL SPICEPREFIX SPICEPREFIXL SPICETYPE
+C1        10micro C-EU025-030X050 C025-030X050 CAPACITOR, European symbol                                                            C                                 
+IC1       LM324N  LM324N          DIL14        OP AMP                                                                                X                                 
+LED1              LED_ELD260      LED_LD260    LED                                                                        DMOD       D                        diode    
+LED2              LED_ELD260      LED_LD260    LED                                                                        DMOD       D                        diode    
+PHONES    1503_09 1503_09         1503_09      Jack connectors according to JISC 6560, 3.5 mm        1243244    unknown              X                                 
+PIN2              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN5              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN6              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN7              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN9              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN10             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN11             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN12             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN36             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN38             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN40             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN42             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINA8             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINA9             PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINGND1           PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINGND2           PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINGND3           PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINVACIO1         PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINVACIO2         PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINVACIO4         PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINVACIO5         PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINVACIO6         PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINVACIO7         PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PINVACIO8         PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+R1        100k    R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R2        100k    R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R3        100k    3RP/1610G       3RP/1610G    16mm Potentiometer two level                                                          J                                 
+R4        100k    3RP/1610G       3RP/1610G    16mm Potentiometer two level                                                          J                                 
+R5        10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R6        10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R7        100k    R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R8        10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R9        10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R10       100k    R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R11       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R12       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R13       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R14       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R15       100k    R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R16       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R17       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R18       100k    R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R19       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R20       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R21       220     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R22       220     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R23       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R24       10k     R-TRIMM64W      RTRIM64W     Trimm resistor                                                             X                      POT                   
+R25       10k     R-US_0207/7     0207/7       RESISTOR, American symbol                                                             R                                 
+R26       10k     R-TRIMM64W      RTRIM64W     Trimm resistor                                                             X                      POT                   
+S1                320-938         320-938      TOGGLE SWITCH                                                                                                           
+SCH1              L03P            L03P         AMP MT CONNECTOR                                      unknown    unknown              X                                 
+SCH2              L03P            L03P         AMP MT CONNECTOR                                      unknown    unknown              X                                 
+SCH3              L03P            L03P         AMP MT CONNECTOR                                      unknown    unknown              X                                 
+SV1               L02P            L02P         AMP MT CONNECTOR                                      unknown    unknown              X                                 
+SV2               L02P            L02P         AMP MT CONNECTOR                                      unknown    unknown              X                                 
+X1                SCD-014A        SCD-014-A    Power Jack 2.5mm                                      unknown    unknown              X                                 
