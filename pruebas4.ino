@@ -3,20 +3,26 @@
  * #include <SineTonesUNQ.h>
  * a #include <SineTones_unq.h>
  */
+// PWM output 
+#define pwmPin1A  11 //OC1A
+#define pwmPin1B  12 //OC1B
+#define pwmPin3A  5  //OC3A
+#define pwmPin3B  2  //OC3B
+#define pwmPin2A  10 //OC2A
+#define pwmPin2B  9  //OC2B
+#include <SineTones_unq5.h>
 
-#include <SineTones_unq4.h>
 
 
-
-long int prevStim_t=0,prevResp_t=0,prevn_t=0,t=0;
-boolean stim_flag=false;
-boolean resp_flag=false;
+//long int prevStim_t=0,prevResp_t=0;
+long int prevn_t=0,t=0;
+//boolean stim_flag=false;
+//boolean resp_flag=false;
 boolean n_flag=false;
 
 // variables for tone condition
-int tone_freq1 = 495;//1046.5; // defines the frequency of the tone (in Hz)
-int tone_freq3 = 1800;//1046.5; // defines the frequency of the tone (in Hz)
-
+int tone_freq1 = 440;//495;//1046.5; // defines the frequency of the tone (in Hz)
+int tone_freq3 = 660;//1800;//1046.5; // defines the frequency of the tone (in Hz)
 
 int pos = 0;
 int vg_value = 0;
@@ -26,99 +32,45 @@ int vg_value = 0;
 
 
 void setup() {
+  pinMode(pwmPin1A, OUTPUT);
+  pinMode(pwmPin1B, OUTPUT);
+  pinMode(pwmPin2A, OUTPUT);
+  pinMode(pwmPin2B, OUTPUT);
+  pinMode(pwmPin3A, OUTPUT);
+  pinMode(pwmPin3B, OUTPUT); // estos pinmodes estan tambien en la librería en el initAllToneTimers
+  //se puede poner en cualquiera de los 2. NO CAMBIA NADA RODRIGO!!!!!
+  vg_value = readVirtualGround();
+  analogWrite(pwmPin1A,vg_value>>4);
+  analogWrite(pwmPin1B,vg_value>>4);
+  analogWrite(pwmPin2A,vg_value>>4);
+  analogWrite(pwmPin2B,vg_value>>4);
+  analogWrite(pwmPin3A,vg_value>>4);
+  analogWrite(pwmPin3B,vg_value>>4);//Esto tampoco hace falta pero Rodrigo quería
+
   
- Serial.begin(9600);
-  // Initialise fast PWM
+  Serial.begin(9600);
   cli();
-//  pinMode(pinVG,INPUT);
-  initOneToneTimer('s');
-  initOneToneTimer('f');
-  initOneToneTimer('n');
-  //tickOn('n',500,true,true);
-  //initAllToneTimers();// inicializa los timers para los tone
+  //pinMode(pinVG,INPUT);
+  initAllToneTimers();// inicializa los timers para los tone
+  tickOn('n',500,true,true);
   /*existe una que es initToneTimer(char) donde el char puede ser
   's' de stimulus, 'f' de feedback, o 'n' de noise. que inicializa 
   solo un timer, por si no se quisieran utilizar los 3 en algún
   trial*/
   //tickOff('s',500,true,true,3);
   //tickOn('n',500,true,true);
-  
-  /*la función tickOn prende el tono de ruido, feed
-   * o stimulus. a la frecuencia freq, y en los 
-   * chanels right o left respectivamente.
-   * el ruido se activa siempre en los dos canales,
-   * y se le puede poner cualquier frecuencia porque
-   * la ignora
-   */
- 
+
+
   sei();
   }
 
 
 void loop(){
-//    vg_value = readVirtualGround(pinVG);
-  
   
       t=millis();
-      //if (t%1000 == 0)
-          //Serial.println(vg_value);
-
-      if ((t-prevStim_t)>600 && stim_flag==false) { //enciende el tono estimulo
-       
-        tickOn('s',tone_freq1,true,false);
-
-        //tickOn('s',tone_freq3,true,true);
-        prevStim_t=t;
-        stim_flag=true;
-      }
-
-      if (t-prevStim_t>50 && stim_flag==true){ //apaga el tono estimulo
-       
-      //tickOff('s',tone_freq1,false,true);
-     vg_value = readVirtualGround();
-      tickOff('s',tone_freq1,true,true,vg_value);
-
-      //tickOff('f',tone_freq3,true,true);
-      stim_flag=false;
-      }    
-
-
-      if ((t-prevResp_t)>550 && resp_flag==false) { //enciende el tono feedback
-       
-        tickOn('f',tone_freq3,true,true);
-        //tickOn('f',tone_freq3,true,true);
-        prevResp_t=t;
-        resp_flag=true;
-      }
-
-      if (t-prevResp_t>50 && resp_flag==true){ //apaga el tono feedback
-       
-      //tickOff('s',tone_freq1,false,true);
-      tickOff('f',tone_freq3,true,true,53);
       
-      //tickOff('f',tone_freq3,true,true);
-      resp_flag=false;
-      }    
-      
+      tickOnWhile('s',tone_freq1,true,true,500,50,t); 
+      tickOnWhile('f',tone_freq3,true,true,600,50,t);          
 
-
-      if ((t-prevn_t)>3000 && n_flag==false) { //enciende el tono feedback
-
-        tickOn('n',tone_freq3,true,true);
-        //tickOn('f',tone_freq3,true,true);
-        prevn_t=t;
-        n_flag=true;
-      }
-
-      if (t-prevn_t>500 && n_flag==true){ //apaga el tono feedback
-       
-      //tickOff('s',tone_freq1,false,true);
-      tickOff('n',tone_freq3,true,true,53);
-      
-      //tickOff('f',tone_freq3,true,true);
-      n_flag=false;
-      }    
-
-
-     
+  
   }
