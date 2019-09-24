@@ -11186,7 +11186,7 @@ distributor RS Components</description>
 <attribute name="SPICEPREFIX" value="X"/>
 </part>
 <part name="S1" library="switch" library_urn="urn:adsk.eagle:library:380" deviceset="320-938" device="" package3d_urn="urn:adsk.eagle:package:27685/1"/>
-<part name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="200k">
+<part name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/7" package3d_urn="urn:adsk.eagle:package:23493/1" value="320k">
 <spice>
 <pinmapping isusermap="yes" isdevicewide="yes">
 <pinmap gate="G$1" pin="1" pinorder="1"/>
