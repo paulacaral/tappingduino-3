@@ -14,6 +14,7 @@
 #define noisePinR4 6
 #define noisePinL4 7
 
+#define beepDuration 100
 //http://sphinx.mythic-beasts.com/~markt/ATmega-timers.html
 boolean stimRight=true;	//pin11 - timer 1, channel A: right
 boolean stimLeft=true;	//pin12 - timer 1, channel B: left
@@ -25,14 +26,15 @@ boolean noiseRight4=true;  //pin6 - timer 4, channel A: right
 boolean noiseLeft4=true;   //pin7 - timer 4, channel B: left
 
 
-unsigned long int prevStim_t=0,prevFdbk_t=0,prevNoise4_t=0,t=0;
+unsigned long int prevStim_t=0,prevFdbk_t=0,prevNoise_t=0,prevNoise4_t=0,t=0;
 boolean stim_flag=false;
 boolean fdbk_flag=false;
+boolean noise_flag=false;
 boolean noise4_flag=false;
 
 unsigned int stimFreq = 440;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 unsigned int fdbkFreq = 660;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
-unsigned int noiseFreq = 800;
+unsigned int noiseFreq = 784;
 
 boolean volt;
 unsigned int voltint;
@@ -118,8 +120,9 @@ static const uint8_t  vgTable[] PROGMEM = {
 
 	static uint16_t phaseIncrementStim = 0;	// 16 bit delta
   static uint16_t phaseIncrementFdbk = 0; // 16 bit delta
+  static uint16_t phaseIncrementNoise = 0; // 16 bit delta
   static uint16_t phaseIncrementNoise4 = 0; // 16 bit delta
-	const uint32_t resolution = 68719;	// DDS resolution - NO PONER 65536
+	const uint32_t resolution = 2*68719;//68719;	// DDS resolution - NO PONER 65536
 
 ISR(TIMER1_OVF_vect) {
 	static uint8_t osc1A = 0;
@@ -146,10 +149,12 @@ ISR(TIMER1_OVF_vect) {
 		osc1B = pgm_read_byte(&sineTable[index1]);
 	else
 		osc1B = pgm_read_byte(&vgTable[1]);
+   
 }
 
 
 ISR(TIMER3_OVF_vect) {
+  
   static uint8_t osc3A = 0;
   static uint8_t osc3B = 0;
   static uint16_t phaseAccumulatorFdbk = 0; // 16 bit accumulator
@@ -174,17 +179,49 @@ ISR(TIMER3_OVF_vect) {
     osc3B = pgm_read_byte(&sineTable[index3]);
   else
     osc3B = pgm_read_byte(&vgTable[1]);
+    
 }
 
-/*
+
 ISR(TIMER2_OVF_vect){
-  OCR2A = generateNoise();
+  //OCR2A = 127;
+  OCR2A = generateNoise();  
   OCR2B = generateNoise();
   }
-*/
+
 
 
 /*
+ISR(TIMER2_OVF_vect)
+{
+  static uint8_t osc2A = 0;
+  static uint8_t osc2B = 0;
+  static uint16_t phaseAccumulatorNoise = 0; // 16 bit accumulator
+  // wavetable lookup index (upper 8 bits of the accumulator)
+  static uint8_t index2 = 0;
+
+  // Send oscillator output to PWM
+  OCR2A = osc2A;
+  OCR2B = osc2B;
+
+  // Update accumulator
+  phaseAccumulatorNoise += phaseIncrementNoise;
+  index2 = phaseAccumulatorNoise >> 8;
+
+  // Read oscillator value for next interrupt
+  if (noiseRight==true)
+    osc2A = pgm_read_byte(&sineTable[index2]);
+  else
+    osc2A = pgm_read_byte(&vgTable[1]);
+
+  if (noiseLeft==true)
+    osc2B = pgm_read_byte(&sineTable[index2]);
+  else
+    osc2B = pgm_read_byte(&vgTable[1]);
+  
+}
+*/
+
 ISR(TIMER4_OVF_vect) {
   static uint8_t osc4A = 0;
   static uint8_t osc4B = 0;
@@ -211,7 +248,7 @@ ISR(TIMER4_OVF_vect) {
   else
     osc4B = pgm_read_byte(&vgTable[1]);
 }
-*/
+
 
 // Configures TIMER1 to fast PWM non inverted mode.
 // Prescaler set to 1, which means that timer overflows
@@ -222,10 +259,12 @@ void initPWMstim(void) {
 	pinMode(stimPinL,OUTPUT);
 
 	// 8-bit Fast PWM - non inverted PWM
-	TCCR1A= _BV(COM1A1) | _BV(COM1B1) | _BV(WGM10);
+//	TCCR1A= _BV(COM1A1) | _BV(COM1B1) | _BV(WGM10);
+  TCCR1A= _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11);//| _BV(WGM10);
   //"_BV" viene de Bit Value porque convierte valores de bit number a byte value, que es lo que se puede configurar en los registros.
 	// Start timer without prescaler
-	TCCR1B = _BV(CS10) | _BV(WGM12);
+	TCCR1B = _BV(WGM12) | _BV(CS10);
+//  TCCR1B = _BV(WGM12) | _BV(CS12);
 	// Enable overflow interrupt for OCR1A
 	TIMSK1 = _BV(TOIE1);
 }
@@ -237,9 +276,11 @@ void initPWMfdbk(void) {
   pinMode(fdbkPinL,OUTPUT);
 
   // 8-bit Fast PWM - non inverted PWM
-  TCCR3A= _BV(COM3A1) | _BV(COM3B1) | _BV(WGM30); //COM3A1 habilita channel A y COM3B1 el channel B. Hay que hacerlo en orden
+//  TCCR3A= _BV(COM3A1) | _BV(COM3B1) | _BV(WGM30); //COM3A1 habilita channel A y COM3B1 el channel B. Hay que hacerlo en orden
+  TCCR3A= _BV(COM3A1) | _BV(COM3B1) | _BV(WGM31);//| _BV(WGM30); //COM3A1 habilita channel A y COM3B1 el channel B. Hay que hacerlo en orden
   // Start timer without prescaler
-  TCCR3B = _BV(CS30) | _BV(WGM32);
+  TCCR3B = _BV(WGM32) | _BV(CS30);
+//  TCCR3B = _BV(WGM32) | _BV(CS32);
   // Enable overflow interrupt for OCR1A and OCR1B
   TIMSK3 = _BV(TOIE3);
 }
@@ -250,28 +291,30 @@ void initPWMnoise(void) {
   pinMode(noisePinR,OUTPUT);
   pinMode(noisePinL,OUTPUT);
 
-  //TIMSK2 = _BV(TOIE2); 
+  TIMSK2 = _BV(TOIE2); 
   //Dos Registros del timer2
- // TCCR2A  = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
- // TCCR2B  = _BV(CS20)   ;//| _BV(WGM22);
+  TCCR2A  = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
+  //TCCR2B  = _BV(CS20)   ;
+  TCCR2B  = _BV(CS21)  | _BV(WGM22);
   // Fast PWM 8bits non inverted, CTC, TOF2 on TOP (OCR2A)
 }
 
-/*
+
 void initPWMnoise4(void) {
   // Set pins as output
   pinMode(noisePinR4,OUTPUT);
   pinMode(noisePinL4,OUTPUT);
 
   // 8-bit Fast PWM - non inverted PWM
-  TCCR4A= _BV(COM4A1) | _BV(COM4B1) | _BV(WGM40); //COM3A1 habilita channel A y COM3B1 el channel B. Hay que hacerlo en orden
+  //TCCR4A= _BV(COM4A1) | _BV(COM4B1) | _BV(WGM40); //COM3A1 habilita channel A y COM3B1 el channel B. Hay que hacerlo en orden
+  TCCR4A= _BV(COM4A1) | _BV(COM4B1) | _BV(WGM41);//| _BV(WGM40);
   // Start timer without prescaler
-  TCCR4B = _BV(CS40) | _BV(WGM42);
+  TCCR4B = _BV(WGM42) | _BV(CS40);
   // Enable overflow interrupt for OCR1A and OCR1B
   TIMSK4 = _BV(TOIE4);
 }
 
-*/
+
 
 // Translates the desired output frequency to a phase
 // increment to be used with the phase accumulator.
@@ -288,8 +331,14 @@ void setFrequencyFdbk(uint16_t frequency) {
   phaseIncrementFdbk = phaseIncr64 >> 16; 
 }
 
+
+void setFrequencyNoise(uint16_t frequency) {
+  uint64_t phaseIncr64 = resolution*frequency;
+  phaseIncrementNoise = phaseIncr64 >> 16; 
+}
+
 void setFrequencyNoise4(uint16_t frequency) {
-  uint64_t phaseIncr64 = 70000*frequency;
+  uint64_t phaseIncr64 = resolution*frequency;
   phaseIncrementNoise4 = phaseIncr64 >> 16; 
 }
 
@@ -317,6 +366,18 @@ void tickOnFdbk(){
 void tickOffFdbk(){
   fdbkLeft = false; 
   fdbkRight = false;
+}
+
+// function to turn tick on
+void tickOnNoise(){
+  noiseLeft = true; 
+  noiseRight = true;
+  setFrequencyNoise(noiseFreq);
+}
+// function to turn tick off
+void tickOffNoise(){
+  noiseLeft = false; 
+  noiseRight = false;
 }
 
 
@@ -354,11 +415,11 @@ unsigned int generateNoise(){
                                     * to taps, 0 elsewhere. */
    if(lfsr & 1) { 
     lfsr =  (lfsr >>1) ^ LFSR_MASK ; 
-    aux = 255;
+    aux = 117+10;
     }
    else{
     lfsr >>= 1;
-    aux = 0;
+    aux = 117-10;
     }
   return(aux);
    
@@ -389,6 +450,8 @@ void setup() {
 	initPWMstim();
   initPWMfdbk();
   initPWMnoise();
+  initPWMnoise4();
+
   
 	sei();
 }
@@ -400,13 +463,15 @@ void loop() {
 
 	t = millis();
 
+
+
 	if ((t-prevStim_t)>500 && stim_flag==false) { //enciende el tono estimulo
 		tickOnStim();
 		prevStim_t = t;
 		stim_flag = true;
 	}
 
-	if (t-prevStim_t>50 && stim_flag==true){ //apaga el tono estimulo
+	if (t-prevStim_t>beepDuration && stim_flag==true){ //apaga el tono estimulo
 		tickOffStim();
 		stim_flag = false;
 	}
@@ -414,36 +479,51 @@ void loop() {
 
 
 
- if ((t-prevFdbk_t)>600 && fdbk_flag==false) { //enciende el tono estimulo
+ if ((t-prevFdbk_t)>800 && fdbk_flag==false) { //enciende el tono estimulo
    tickOnFdbk();
     prevFdbk_t = t;
     fdbk_flag = true;
   }
 
-  if (t-prevFdbk_t>50 && fdbk_flag==true){ //apaga el tono estimulo
+  if (t-prevFdbk_t>beepDuration && fdbk_flag==true){ //apaga el tono estimulo
     tickOffFdbk();
     fdbk_flag = false;
   }
 
 
+
 /*
-   if ((t-prevNoise4_t)>700 && noise4_flag==false) { //enciende el tono estimulo
+   if ((t-prevNoise_t)>700 && noise_flag==false) { //enciende el tono estimulo
+    tickOnNoise();
+    prevNoise_t = t;
+    noise_flag = true;
+  }
+
+  if (t-prevNoise_t>50 && noise_flag==true){ //apaga el tono estimulo
+    tickOffNoise();
+    noise_flag = false;
+  }
+ 
+  
+*/
+   /*
+   if ((t-prevNoise4_t)>1100 && noise4_flag==false) { //enciende el tono estimulo
    tickOnNoise4();
     prevNoise4_t = t;
     noise4_flag = true;
   }
 
-  if (t-prevNoise4_t>50 && noise4_flag==true){ //apaga el tono estimulo
+  if (t-prevNoise4_t>beepDuration && noise4_flag==true){ //apaga el tono estimulo
     tickOffNoise4();
     noise4_flag = false;
   }
 */
 
-  
+  /*
   volt=(boolean)generateNoise();
   digitalWrite (noisePinR, volt);
   digitalWrite (noisePinL, volt);
-  
+  */
 
   /*
   voltint=generateNoise();
