@@ -13,6 +13,8 @@
 #define noisePinL 9
 #define noisePinR4 6
 #define noisePinL4 7
+#define pinVG A11
+int vg = 0;
 
 #define beepDuration 100
 //http://sphinx.mythic-beasts.com/~markt/ATmega-timers.html
@@ -142,13 +144,15 @@ ISR(TIMER1_OVF_vect) {
 	// Read oscillator value for next interrupt
 	if (stimRight==true)
 		osc1A = pgm_read_byte(&sineTable[index1]);
-	else
-		osc1A = pgm_read_byte(&vgTable[1]);
+	//else
+    //osc1A = (int) (vg*256/1024);
+		//osc1A = pgm_read_byte(&vgTable[1]);
 
 	if (stimLeft==true)
 		osc1B = pgm_read_byte(&sineTable[index1]);
-	else
-		osc1B = pgm_read_byte(&vgTable[1]);
+	//else
+    //osc1B = (int) (vg*256/1024);
+		//osc1B = pgm_read_byte(&vgTable[1]);
    
 }
 
@@ -172,20 +176,21 @@ ISR(TIMER3_OVF_vect) {
   // Read oscillator value for next interrupt
   if (fdbkRight==true)
     osc3A = pgm_read_byte(&sineTable[index3]);
-  else
-    osc3A = pgm_read_byte(&vgTable[1]);
+  //else
+    //osc3A = (int) (vg*256/1024);
+    //osc3A = pgm_read_byte(&vgTable[1]);
 
   if (fdbkLeft==true)
     osc3B = pgm_read_byte(&sineTable[index3]);
-  else
-    osc3B = pgm_read_byte(&vgTable[1]);
+  //else
+    //osc3B = (int) (vg*256/1024);
+    //osc3B = pgm_read_byte(&vgTable[1]);
     
 }
 
 
 ISR(TIMER2_OVF_vect){
   OCR2A = 127;
-  //OCR2A = generateNoise();  
   OCR2B = generateNoise();
   }
 
@@ -415,23 +420,26 @@ unsigned int generateNoise(){
                                     * to taps, 0 elsewhere. */
    if(lfsr & 1) { 
     lfsr =  (lfsr >>1) ^ LFSR_MASK ; 
-    aux = 117+5;
+    aux = 117+1;
     }
    else{
     lfsr >>= 1;
-    aux = 117-5;
+    aux = 117-1;
     }
   return(aux);
    
 }
 
 
-
+int readVirtualGround(void)
+{
+  int pin = pinVG;
+  return analogRead(pin);
+}
 
 
 
 void setup() {
-
 
 	cli();
 
@@ -449,9 +457,11 @@ void setup() {
 
 	initPWMstim();
   initPWMfdbk();
-  //initPWMnoise();
+  initPWMnoise();
  // initPWMnoise4();
 
+  
+  //vg = readVirtualGround();
   
 	sei();
 }
@@ -464,7 +474,7 @@ void loop() {
 	t = millis();
 
 
-
+/*
 	if ((t-prevStim_t)>500 && stim_flag==false) { //enciende el tono estimulo
 		tickOnStim();
 		prevStim_t = t;
@@ -475,8 +485,7 @@ void loop() {
 		tickOffStim();
 		stim_flag = false;
 	}
-
-
+*/
 
 
  if ((t-prevFdbk_t)>800 && fdbk_flag==false) { //enciende el tono estimulo
