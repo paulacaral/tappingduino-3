@@ -124,15 +124,18 @@ static const uint8_t  vgTable[] PROGMEM = {
   static uint16_t phaseIncrementFdbk = 0; // 16 bit delta
   static uint16_t phaseIncrementNoise = 0; // 16 bit delta
   static uint16_t phaseIncrementNoise4 = 0; // 16 bit delta
+  // wavetable lookup index (upper 8 bits of the accumulator)
+  uint8_t index1 = 0;
+  uint8_t index3 = 0;
+ 
+
 	const uint32_t resolution = 2*68719;//68719;	// DDS resolution - NO PONER 65536
 
 ISR(TIMER1_OVF_vect) {
 	static uint8_t osc1A = 0;
 	static uint8_t osc1B = 0;
 	static uint16_t phaseAccumulatorStim = 0;	// 16 bit accumulator
-	// wavetable lookup index (upper 8 bits of the accumulator)
-	static uint8_t index1 = 0;
-
+	
 	// Send oscillator output to PWM
 	OCR1A = osc1A;
 	OCR1B = osc1B;
@@ -144,8 +147,8 @@ ISR(TIMER1_OVF_vect) {
 	// Read oscillator value for next interrupt
 	if (stimRight==true)
 		osc1A = pgm_read_byte(&sineTable[index1]);
-	//else
-    //osc1A = (int) (vg*256/1024);
+//	else
+  //  osc1A = (int) (vg*256/1024);
 		//osc1A = pgm_read_byte(&vgTable[1]);
 
 	if (stimLeft==true)
@@ -162,8 +165,6 @@ ISR(TIMER3_OVF_vect) {
   static uint8_t osc3A = 0;
   static uint8_t osc3B = 0;
   static uint16_t phaseAccumulatorFdbk = 0; // 16 bit accumulator
-  // wavetable lookup index (upper 8 bits of the accumulator)
-  static uint8_t index3 = 0;
 
   // Send oscillator output to PWM
   OCR3A = osc3A;
@@ -352,6 +353,7 @@ void tickOnStim(){
 	stimLeft = true; 
 	stimRight = true;
 	setFrequencyStim(stimFreq);
+  index1 = 0;
 }
 
 // function to turn tick off
@@ -365,6 +367,7 @@ void tickOnFdbk(){
   fdbkLeft = true; 
   fdbkRight = true;
   setFrequencyFdbk(fdbkFreq);
+  index3 = 0;
 }
 
 // function to turn tick off
@@ -439,6 +442,96 @@ int readVirtualGround(void)
 
 
 
+/* Translates the desired output frequency to a phase
+ increment to be used with the phase accumulator.*/
+uint16_t setFrequency( uint16_t frequency ){
+  uint32_t phaseIncr64 =  resolution * frequency;
+  return (phaseIncr64 >> 16);
+}
+
+// function to turn tick on
+void tickOn(char tipo,uint16_t freq, boolean left, boolean right){
+/* This function enables the timerOverflowInterrupt in the time Mask 
+Depending on tipo, if tipo is 's', selects Timer 1 (stimulus)
+if tipo is 'f' selects Timer 3 (feedback)
+if tipo is 'n' selects Timer.. (Noise)
+the left and right bools as true or false selects the channels where
+the signals will come out*/
+  if (tipo=='s'){//Stimulus 
+    phaseIncrementStim = setFrequency(stimFreq);
+    index1 = 0;
+    stimRight    = right;
+    stimLeft     = left;
+  }
+  if (tipo=='f'){//Feedback
+    phaseIncrementFdbk = setFrequency(fdbkFreq);
+    index3 = 0;
+    fdbkRight    = right;
+    fdbkLeft     = left;
+  }
+  if (tipo=='n'){//Noise
+
+    noiseRight      = right;
+    noiseLeft       = left;
+  }
+}
+
+// function to turn tick off
+void tickOff(char tipo,uint16_t freq, boolean left, boolean right, int vg_value) {
+/* Disable the timerOverflowInterrupt based on 'tipo'*/
+  if (tipo=='s'){//Stimulus
+    if(right){ 
+      stimRight    = false;}//!right;}
+    if(left){ 
+      stimLeft     = false;}//!left;}
+    vg = vg_value;
+  }
+  if (tipo=='f'){
+    if(right){
+      fdbkRight    = false;}//!right;}
+    if(left){
+      fdbkLeft     = false;}//!left;}
+    vg = vg_value;
+  }
+  if (tipo=='n'){
+
+    noiseRight      = !right;
+    noiseLeft       = !left;
+  } //dejo el comp en la mitad, para tener 2.5v sirve?
+}
+
+
+void tickOnWhile(char tipo,uint16_t freq, boolean left, boolean right,
+    uint16_t cadaCuanto, uint16_t cuanto, uint64_t t){
+  boolean *flag;
+  long int *prev_t;
+  if (tipo=='s'){
+  flag   = &stim_flag;
+  prev_t = &prevStim_t;
+  } 
+  if (tipo=='f'){
+  flag   = &fdbk_flag;
+  prev_t = &prevFdbk_t;
+  }
+
+
+      if ((t-*prev_t)>cadaCuanto && *flag==false) { //enciende el tono estimulo
+       
+        tickOn(tipo, freq ,left,right);
+        *prev_t=t;
+        *flag=true;
+      }
+      
+      if (t-*prev_t>cuanto && *flag==true){ //apaga el tono estimulo
+
+      vg = readVirtualGround();
+      tickOff(tipo,freq,left,right,vg);
+      *flag=false;
+      }  
+}
+
+
+
 void setup() {
 
 	cli();
@@ -457,7 +550,7 @@ void setup() {
 
 	initPWMstim();
   initPWMfdbk();
-  initPWMnoise();
+ // initPWMnoise();
  // initPWMnoise4();
 
   
@@ -473,8 +566,14 @@ void loop() {
 
 	t = millis();
 
+  tickOnWhile('s',stimFreq, true, true, 500, 50, t);
 
-/*
+  tickOnWhile('f',fdbkFreq, true, true, 600, 50, t);
+
+
+  /*
+   vg = readVirtualGround();
+
 	if ((t-prevStim_t)>500 && stim_flag==false) { //enciende el tono estimulo
 		tickOnStim();
 		prevStim_t = t;
@@ -485,7 +584,7 @@ void loop() {
 		tickOffStim();
 		stim_flag = false;
 	}
-*/
+
 
 
  if ((t-prevFdbk_t)>800 && fdbk_flag==false) { //enciende el tono estimulo
@@ -499,7 +598,7 @@ void loop() {
     fdbk_flag = false;
   }
 
-
+*/
 
 /*
    if ((t-prevNoise_t)>700 && noise_flag==false) { //enciende el tono estimulo
