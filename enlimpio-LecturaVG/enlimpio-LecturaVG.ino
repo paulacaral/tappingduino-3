@@ -147,14 +147,14 @@ ISR(TIMER1_OVF_vect) {
 	// Read oscillator value for next interrupt
 	if (stimRight==true)
 		osc1A = pgm_read_byte(&sineTable[index1]);
-//	else
-  //  osc1A = (int) (vg*256/1024);
+	else
+    osc1A = (int) (vg*256/1024);
 		//osc1A = pgm_read_byte(&vgTable[1]);
 
 	if (stimLeft==true)
 		osc1B = pgm_read_byte(&sineTable[index1]);
-	//else
-    //osc1B = (int) (vg*256/1024);
+	else
+    osc1B = (int) (vg*256/1024);
 		//osc1B = pgm_read_byte(&vgTable[1]);
    
 }
@@ -177,14 +177,14 @@ ISR(TIMER3_OVF_vect) {
   // Read oscillator value for next interrupt
   if (fdbkRight==true)
     osc3A = pgm_read_byte(&sineTable[index3]);
-  //else
-    //osc3A = (int) (vg*256/1024);
+  else
+    osc3A = (int) (vg*256/1024);
     //osc3A = pgm_read_byte(&vgTable[1]);
 
   if (fdbkLeft==true)
     osc3B = pgm_read_byte(&sineTable[index3]);
-  //else
-    //osc3B = (int) (vg*256/1024);
+  else
+    osc3B = (int) (vg*256/1024);
     //osc3B = pgm_read_byte(&vgTable[1]);
     
 }
@@ -550,7 +550,7 @@ void setup() {
 
 	initPWMstim();
   initPWMfdbk();
- // initPWMnoise();
+  initPWMnoise();
  // initPWMnoise4();
 
   
