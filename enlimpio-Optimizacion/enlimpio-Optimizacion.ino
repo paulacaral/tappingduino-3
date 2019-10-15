@@ -17,13 +17,13 @@
 #define LFSR_MASK  ((unsigned long)( 1UL<<31 | 1UL <<15 | 1UL <<2 | 1UL <<1  ))
 
 //http://sphinx.mythic-beasts.com/~markt/ATmega-timers.html
-boolean stimRight=true;	//pin11 - timer 1, channel A: right
-boolean stimLeft=true;	//pin12 - timer 1, channel B: left
-boolean fdbkRight=true;	//pin5 - timer 3, channel A: right
-boolean fdbkLeft=true;	//pin2 - timer 3, channel B: left
+boolean stimRight=true;  //pin11 - timer 1, channel A: right
+boolean stimLeft=true;  //pin12 - timer 1, channel B: left
+boolean fdbkRight=true; //pin5 - timer 3, channel A: right
+boolean fdbkLeft=true;  //pin2 - timer 3, channel B: left
 boolean noise = false;
 
-unsigned long int prevStim_t=0,prevFdbk_t=0,prevNoise_t=0,prevNoise4_t=0,t=0;
+unsigned long int prevStim_t=0,prevFdbk_t=0,t=0;
 boolean stim_flag=false;
 boolean fdbk_flag=false;
 
@@ -41,7 +41,9 @@ uint16_t phaseAccumulatorFdbk = 0; // 16 bit accumulator
 
 
 // DDS resolution - NO PONER 65536
-const uint32_t resolution = 2*68719;//68719;  // el 2 multiplicando es por el modo del timer usado
+//const uint32_t resolution = 2*68719;//68719;  // el 2 multiplicando es por el modo del timer usado
+const uint32_t freq_samp = 31180; // 16MHz/513 porque ahora el pin está en modo 9 bits
+const uint32_t resolution_DDS = pow(2,32)/freq_samp;
 
 //////////// Set up lookup table for waveform generation
 // sine wavefunction
@@ -81,21 +83,21 @@ static const uint8_t  sineTable[] PROGMEM = {
 };
 
 ISR(TIMER1_OVF_vect) {
-	// wavetable lookup index (upper 8 bits of the accumulator)
+  // wavetable lookup index (upper 8 bits of the accumulator)
   uint8_t index1 = 0;
   
-	// Update accumulator
-	phaseAccumulatorStim += phaseIncrementStim;
-	index1 = phaseAccumulatorStim >> 8;
+  // Update accumulator
+  phaseAccumulatorStim += phaseIncrementStim;
+  index1 = phaseAccumulatorStim >> 8;
 
-	// Read oscillator value for next interrupt
-	if (stimRight==true)
-		OCR1A = pgm_read_byte(&sineTable[index1]);
-	else
+  // Read oscillator value for next interrupt
+  if (stimRight==true)
+    OCR1A = pgm_read_byte(&sineTable[index1]);
+  else
     OCR1A = vg;
-	if (stimLeft==true)
-		OCR1B = pgm_read_byte(&sineTable[index1]);
-	else
+  if (stimLeft==true)
+    OCR1B = pgm_read_byte(&sineTable[index1]);
+  else
     OCR1B = vg;  
 }
 
@@ -133,7 +135,7 @@ void initTimers(void){
   pinMode(stimPinR,OUTPUT);
   pinMode(stimPinL,OUTPUT);
 
-  // 8-bit Fast PWM - non inverted PWM
+  // 9-bit Fast PWM - non inverted PWM
   //  TCCR1A= _BV(COM1A1) | _BV(COM1B1) | _BV(WGM10);
   TCCR1A= _BV(COM1A1) | _BV(COM1B1) | _BV(WGM11);//| _BV(WGM10);
   //"_BV" viene de Bit Value porque convierte valores de bit number a byte value, que es lo que se puede configurar en los registros.
@@ -148,7 +150,7 @@ void initTimers(void){
   pinMode(fdbkPinR,OUTPUT);
   pinMode(fdbkPinL,OUTPUT);
 
-  // 8-bit Fast PWM - non inverted PWM
+  // 9-bit Fast PWM - non inverted PWM
   //  TCCR3A= _BV(COM3A1) | _BV(COM3B1) | _BV(WGM30); //COM3A1 habilita channel A y COM3B1 el channel B. Hay que hacerlo en orden
   TCCR3A= _BV(COM3A1) | _BV(COM3B1) | _BV(WGM31);//| _BV(WGM30); //COM3A1 habilita channel A y COM3B1 el channel B. Hay que hacerlo en orden
   // Start timer without prescaler
@@ -202,12 +204,12 @@ int readVirtualGround(void)
 
 /* Translates the desired output frequency to a phase increment to be used with the phase accumulator.*/
 uint16_t setFrequency( uint16_t frequency ){
-  uint32_t phaseIncr64 =  resolution * frequency;
-  return (phaseIncr64 >> 16);
+  uint32_t phaseIncr32 =  resolution_DDS * frequency;
+  return (phaseIncr32 >> 16);
 }
 
 // Function to start playing sound
-void PlaySound(char tipo,uint16_t freq, boolean left, boolean right){
+void SoundSwitch(char tipo,uint16_t freq, boolean left, boolean right){
 /* This function enables the timerOverflowInterrupt in the time mask depending on tipo: 
 if tipo is 's', selects Timer 1 (stimulus)
 if tipo is 'f' selects Timer 3 (feedback)
@@ -219,25 +221,27 @@ for 'n', freq is the amplitud in GenerateNoise, meaning the volume of the white 
   switch(tipo){
     case 's':
       phaseIncrementStim = setFrequency(freq);
-      phaseAccumulatorStim = 0;
-      if(right){ 
-        stimRight    = true;
-      }
-      if(left){ 
-        stimLeft     = true;
-      }
+      
+      if(right) stimRight = true;
+      else stimRight = false;
+      
+      if(left)  stimLeft = true;
+      else  stimLeft = false;
+      
       break;
+      
   
     case 'f':
       phaseIncrementFdbk = setFrequency(freq);
-      phaseAccumulatorFdbk = 0;
-      if(right){ 
-        fdbkRight    = true;
-      }
-      if(left){ 
-        fdbkLeft     = true;
-      }
+      
+      if(right) fdbkRight    = true;
+      else  fdbkRight = false;
+
+      if(left)  fdbkLeft     = true;
+      else  fdbkLeft = false;     
+
       break;
+
   
     case 'n':
       amplitud = freq;
@@ -247,9 +251,9 @@ for 'n', freq is the amplitud in GenerateNoise, meaning the volume of the white 
 }
 
 // Function to turn sound off
-void StopSound(char tipo,uint16_t freq, boolean left, boolean right) {
+//void StopSound(char tipo,uint16_t freq, boolean left, boolean right) {
 /* Disable the timerOverflowInterrupt based on 'tipo'*/
-  switch(tipo){
+ /* switch(tipo){
     case 's':
       if(right){ 
         stimRight    = false;
@@ -269,31 +273,35 @@ void StopSound(char tipo,uint16_t freq, boolean left, boolean right) {
       break;
   }
 }
-
+*/
 
 void PlaySoundWhile(char tipo,uint16_t freq, boolean left, boolean right, uint16_t cadaCuanto, uint16_t cuanto, uint64_t t){  
   boolean *flag;
   long int *prev_t;
+  uint16_t *phaseAccumulator;
   switch(tipo){
     case 's':
       flag   = &stim_flag;
       prev_t = &prevStim_t;
+      phaseAccumulator = &phaseAccumulatorStim;
       break;
 
     case 'f':
       flag   = &fdbk_flag;
       prev_t = &prevFdbk_t;
+      phaseAccumulator = &phaseAccumulatorFdbk;
       break;
   }
 
   if ((t-*prev_t)>cadaCuanto && *flag==false) { //enciende el sonido
-    PlaySound(tipo, freq ,left,right);
+    *phaseAccumulator = 0;
+    SoundSwitch(tipo, freq, left, right);
     *prev_t=t;
     *flag=true;
   }
       
   if (t-*prev_t>cuanto && *flag==true){ //apaga el sonido
-    StopSound(tipo,freq,left,right);
+    SoundSwitch(tipo, freq, false, false);
     *flag=false;
   }  
 }
@@ -302,7 +310,7 @@ void PlaySoundWhile(char tipo,uint16_t freq, boolean left, boolean right, uint16
 
 void setup() {
 
-	cli();
+  cli();
   
   initTimers();
 
@@ -310,19 +318,20 @@ void setup() {
   read_vg = readVirtualGround();
   vg = (int) (read_vg*256/1024);
   
-	sei();
+  sei();
 }
 
 
 
 void loop() {
 
-	t = millis();
+  t = millis();
 
   PlaySoundWhile('s',stimFreq, true, true, 500, 50, t);
+  //SoundSwitch('s',stimFreq,true,true);
 
-  PlaySoundWhile('f',fdbkFreq, true, true, 600, 50, t);
+  //PlaySoundWhile('f',fdbkFreq, true, true, 600, 50, t);
 
-  PlaySound('n',1,true,true);
+  //SoundSwitch('n',1,true,true);
   
 }
