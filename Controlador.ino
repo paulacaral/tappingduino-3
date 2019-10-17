@@ -23,11 +23,12 @@ boolean fdbkRight=true; //pin5 - timer 3, channel A: right
 boolean fdbkLeft=true;  //pin2 - timer 3, channel B: left
 boolean noise = false;
 
-unsigned long int prevStim_t=0,prevFdbk_t=0,t=0;
+unsigned long int t=0;
+long int prevStim_t=0,prevFdbk_t=0;
 boolean stim_flag=false;
 boolean fdbk_flag=false;
 
-unsigned int stimFreq = 5000;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
+unsigned int stimFreq = 440;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 unsigned int fdbkFreq = 660;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 
 int vg = 0;
@@ -61,7 +62,7 @@ unsigned int isi=300,n_stim=3; //Entiendo que son valores iniciales por las duda
 int perturb_size=0;  // estos los agrego paraque no tire error
 unsigned int perturb_bip=0;
 unsigned int event_type=0;
-#define INPUTPIN 11
+#define INPUTPIN 50
 char message[20];
 
 
@@ -238,7 +239,7 @@ for 'n', freq is the amplitud in GenerateNoise, meaning the volume of the white 
   switch(tipo){
     case 's':
       phaseIncrementStim = setFrequency(freq);
-      
+
       if(right) stimRight = true;
       else stimRight = false;
       
@@ -364,8 +365,10 @@ void parse_data(char *line) {
 
 
 //---------------------------------------------------------------------
+
 void get_parameters() {
-	char line[45],i,aux='0';
+  char line[45];
+	char i,aux='0';
 	i = 0;
 
 	//directly read next available character from buffer
@@ -415,8 +418,6 @@ void setup() {
 
 void loop() {
 
-	t = millis();
-	
 	//AGREGO
 	if(allow == false){
 		get_parameters();
@@ -433,11 +434,14 @@ void loop() {
 	}
 
 	else{
+    t = millis();
 		//send stimulus
 		//PlaySoundWhile('s',stimFreq, true, true, isi, STIM_DURATION, t);
 		//SoundSwitch('s',stimFreq,true,true);
+
+    
 		if ((t-prevStim_t)> isi && stim_flag==false) { //enciende el sonido
-			phaseAccumulatorStim = 0;
+      phaseAccumulatorStim = 0;
 			SoundSwitch('s', stimFreq, true, true);
 			prevStim_t=t;
 			stim_flag=true;
@@ -446,6 +450,12 @@ void loop() {
 		if (t-prevStim_t>STIM_DURATION && stim_flag==true){ //apaga el sonido
 			SoundSwitch('s', stimFreq, false, false);
 			stim_flag=false;
+      //store event data
+      event_name[event_counter] = 'S';
+      event_number[event_counter] = stim_number;
+      event_time[event_counter] = t;
+      event_counter++;
+      stim_number++;
 		}		
 
 
@@ -463,6 +473,7 @@ void loop() {
 		if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag==true){ //apaga el sonido
 			SoundSwitch('f', fdbkFreq, false, false);
 			fdbk_flag=false;
+      event_counter++;
 		}
 
 
@@ -470,8 +481,7 @@ void loop() {
 		//allow one more period (without stimulus)
 		if (stim_number > n_stim && (t - prevStim_t) >= isi) {
 			for (i=0; i<event_counter; i++) {
-				sprintf(message,"%c %d: %ld;",
-					event_name[i],event_number[i],event_time[i]);
+				sprintf(message,"%c %d: %ld;",event_name[i],event_number[i],event_time[i]);
 				serial_print_string(message);
 			}
 			Serial.println("E");	//send END message
