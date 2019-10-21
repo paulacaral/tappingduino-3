@@ -292,9 +292,8 @@ void tickOnWhile(char tipo,uint16_t freq, boolean left, boolean right, uint16_t 
   }
       
   if (t-*prev_t>cuanto && *flag==true){ //apaga el tono estimulo
-  
-  tickOff(tipo,freq,left,right);
-  *flag=false;
+    tickOff(tipo,freq,left,right);
+    *flag=false;
   }  
 }
 
@@ -319,10 +318,10 @@ void loop() {
 
 	t = millis();
 
-  tickOnWhile('s',stimFreq, true, true, 500, 50, t);
+  tickOnWhile('s',stimFreq, true, true, 1000, 200, t);
 
-  tickOnWhile('f',fdbkFreq, true, true, 600, 50, t);
+  //tickOnWhile('f',fdbkFreq, true, true, 600, 50, t);
 
-  tickOn('n',1,true,true);
+  //tickOn('n',1,true,true);
   
 }
