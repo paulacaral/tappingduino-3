@@ -55,14 +55,14 @@ int fdbk, i;
 unsigned int stim_number,fdbk_number;
 unsigned int *event_number;
 char *event_name;
-unsigned long * event_time;
+unsigned long *event_time;
 unsigned int event_counter; 
 
 unsigned int isi=300,n_stim=3; //Entiendo que son valores iniciales por las dudas 
 int perturb_size=0;  // estos los agrego paraque no tire error
 unsigned int perturb_bip=0;
 unsigned int event_type=0;
-#define INPUTPIN 50
+#define INPUTPIN A11
 char message[20];
 
 
@@ -354,11 +354,13 @@ void parse_data(char *line) {
 			default:
 				break;
 		}
-		line += n;
+		line += n+1;
+    /*
 		if (*line != ';')
 			break;
 		while (*line == ';')
 			line++;
+    */
 	}
 	return;
 }
@@ -445,18 +447,19 @@ void loop() {
 			SoundSwitch('s', stimFreq, true, true);
 			prevStim_t=t;
 			stim_flag=true;
-		}
 
-		if (t-prevStim_t>STIM_DURATION && stim_flag==true){ //apaga el sonido
-			SoundSwitch('s', stimFreq, false, false);
-			stim_flag=false;
       //store event data
       event_name[event_counter] = 'S';
       event_number[event_counter] = stim_number;
       event_time[event_counter] = t;
       event_counter++;
       stim_number++;
-		}		
+		}
+
+		if (t-prevStim_t>STIM_DURATION && stim_flag==true){ //apaga el sonido
+			SoundSwitch('s', stimFreq, false, false);
+			stim_flag=false;
+		}	
 
 
 
@@ -466,15 +469,21 @@ void loop() {
 			if (fdbk == HIGH){
 				SoundSwitch('f', fdbkFreq, true, true);
 				prevFdbk_t=t;
-				fdbk_flag=true;
+				fdbk_flag=true;   
+        
+        //store event data
+        event_name[event_counter] = 'F';
+        event_number[event_counter] = fdbk_number;
+        event_time[event_counter] = t;
+        event_counter++;
+        fdbk_number++;
 			}
 		}
 
-		if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag==true){ //apaga el sonido
-			SoundSwitch('f', fdbkFreq, false, false);
-			fdbk_flag=false;
-      event_counter++;
-		}
+	  if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag==true){ //apaga el sonido
+      SoundSwitch('f', fdbkFreq, false, false);
+      fdbk_flag=false;
+    }
 
 
 		//end trial
