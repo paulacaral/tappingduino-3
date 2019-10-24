@@ -64,7 +64,7 @@ unsigned int perturb_bip=0;
 unsigned int event_type=0;
 #define INPUTPIN A9
 char message[20];
-
+boolean SR=false, SL=false, FR=false, FL=false;
 
 //////////// Set up lookup table for waveform generation
 // sine wavefunction
@@ -331,6 +331,44 @@ void parse_data(char *line) {
 			case 'E':
 				event_type = data;
 				break;
+      case 'S':
+        switch (field[1]){
+          case 'R':
+            SR = true;
+            break;
+          case 'L':
+            SL = true;
+            break;
+          case 'B':
+            SR = true;
+            SL = true;
+            break;
+          case 'N':
+            SR = false;
+            SL = false;
+            break;
+        }
+        break;
+      case 'F':
+        switch (field[1]){
+          case 'R':
+            FR = true;
+            FL = false;
+            break;
+          case 'L':
+            FR = false;
+            FL = true;
+            break;
+          case 'B':
+            FR = true;
+            FL = true;
+            break;
+          case 'N':
+            FR = false;
+            FL = false;
+            break;
+        }
+        break;
 			default:
 				break;
 		}
@@ -436,7 +474,7 @@ void loop() {
 		//send stimulus
 		if ((t-prevStim_t)> isi && stim_flag==false) { //enciende el sonido
       phaseAccumulatorStim = 0;
-			SoundSwitch('s', stimFreq, true, true);
+			SoundSwitch('s', stimFreq, SL, SR);
       prevStim_t=t;
       stim_flag=true;
       save_data('S', stim_number, t);
@@ -448,7 +486,7 @@ void loop() {
 			if (fdbk == HIGH){
         phaseAccumulatorFdbk = 0;
 				prevFdbk_t=t;
-				SoundSwitch('f', fdbkFreq, true, true);
+				SoundSwitch('f', fdbkFreq, FL, FR);
         fdbk_flag=true;
         save_data('F', fdbk_number, t);
   		}
@@ -472,6 +510,8 @@ void loop() {
   		free(event_name);
 			free(event_number);
 			free(event_time);	
+       //just in case, clear incoming buffer once read
+      //Serial.flush();
 		}
 
 	}

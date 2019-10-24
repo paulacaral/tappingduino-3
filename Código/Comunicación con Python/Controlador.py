@@ -16,7 +16,7 @@ time.sleep(2)
 #%% definitions
 
 ISI = 500;		# interstimulus interval (milliseconds)
-N_stim = 15;	# number of bips within a sequence
+N_stim = 10;	# number of bips within a sequence
 
 
 #%%
@@ -26,7 +26,8 @@ name = raw_input("Ingrese su nombre: ")
 timestr = time.strftime("%Y_%m_%d-%H:%M:%S")
 filename = name+"-"+timestr+"-raw.txt"
 
-message = ";I%d;N%d;P%d;B%d;E%d;X" % (ISI, N_stim, 100, 10, 3)
+
+message = ";SB;FB;I%d;N%d;P%d;B%d;E%d;X" % (ISI, N_stim, 100, 10, 3)
 arduino.write(message)
 
 
@@ -63,6 +64,7 @@ for i in range(e_total):
         fdbk_number.append(e_number[i])
         fdbk_time.append(e_time[i])
 
+#%%
 # Grafica los resultados
 long_stim = len(stim_time)
 long_fdbk = len(fdbk_time)
@@ -76,7 +78,7 @@ for k in range(long_fdbk):
     plt.axvline(x=fdbk_time[k],color='b',label=my_labels["fdbk"])
     my_labels["fdbk"] = "_nolegend_"
    
-plt.axis([min(stim_time)-10,max(stim_time)+10,0,1])
+plt.axis([min(stim_time)-50,max(fdbk_time)+50,0,1])
 plt.xlabel('Tiempo[ms]',fontsize=12)
 plt.grid()    
 plt.legend(fontsize=12)
@@ -84,30 +86,54 @@ plt.show()
 
 #%%
 # Grafica asincronias 
-asynchrony = []
+
 j = 0
-i = 0
+i = long_fdbk-1
 
-if long_stim < long_fdbk:
-    while i in range(long_fdbk-1):
-        diff = stim_time[j]-fdbk_time[i]
-        if abs(diff)<150:
-            asynchrony.append(diff)
-            j = j+1
-            i = i+1
-        else:
-            j = j+1
+while j < long_stim:
+    diff = stim_time[j]-fdbk_time[0]
+    if abs(diff)<200:
+        indice_primer_stim = j
+        break;
+    else:
+        j = j+1
 
-else:
-     while j in range(long_stim-1):
-        diff = stim_time[j]-fdbk_time[i]
-        if abs(diff)<150:
-            asynchrony.append(diff)
-            j = j+1
-            i = i+1
-        else:
-            j = j+1
+while i > 0:
+    diff = stim_time[long_stim-1]-fdbk_time[i]
+    if abs(diff)<200:
+        indice_ultimo_fdbk = i+1
+        break;
+    else:
+        i = i-1
 
+stim_pares = stim_time[indice_primer_stim:]
+fdbk_pares = fdbk_time[0:indice_ultimo_fdbk]
+
+
+long_stim_pares = len(stim_pares)
+long_fdbk_pares = len(fdbk_pares)
+my_labels = {"stim" : "Stimulus", "fdbk" : "Feedback"}
+plt.figure(figsize=(9,6))
+for j in range(long_stim_pares):
+    plt.axvline(x=stim_pares[j],color='y',linestyle='dashed',label=my_labels["stim"])
+    my_labels["stim"] = "_nolegend_"
+
+for k in range(long_fdbk_pares):
+    plt.axvline(x=fdbk_pares[k],color='c',label=my_labels["fdbk"])
+    my_labels["fdbk"] = "_nolegend_"
+    
+plt.axis([min(fdbk_pares)-50,max(stim_pares)+50,0,1])
+  
+plt.xlabel('Tiempo[ms]',fontsize=12)
+plt.grid()    
+plt.legend(fontsize=12)
+plt.show()
+
+
+asynchrony = []
+
+for k in range(long_stim_pares):
+    asynchrony.append(stim_pares[k]-fdbk_pares[k])
 
 plt.plot(asynchrony,'.')
 plt.xlabel('# beep',fontsize=12)
