@@ -327,6 +327,7 @@ void parse_data(char *line) {
 				break;
 			case 'B':
 				perturb_bip = data;
+        break;
 			case 'E':
 				event_type = data;
 				break;
@@ -371,6 +372,24 @@ void get_parameters() {
 	return;
 }
 
+//---------------------------------------------------------------------
+void save_data(char ename, unsigned int enumber, unsigned long etime){
+      //store event data
+      event_name[event_counter] = ename;
+      event_number[event_counter] = enumber;
+      event_time[event_counter] = etime;
+      event_counter++;
+
+      switch(ename){
+        case 'S':
+          stim_number++;
+          break;
+
+        case 'F':
+          fdbk_number++;
+          break;
+      }    
+}
 
 
 void setup() {
@@ -420,12 +439,7 @@ void loop() {
 			SoundSwitch('s', stimFreq, true, true);
       prevStim_t=t;
       stim_flag=true;
-      //store event data
-      event_name[event_counter] = 'S';
-      event_number[event_counter] = stim_number;
-      event_time[event_counter] = t;
-      event_counter++;
-      stim_number++;
+      save_data('S', stim_number, t);
 		}
 
 		//read response
@@ -436,13 +450,7 @@ void loop() {
 				prevFdbk_t=t;
 				SoundSwitch('f', fdbkFreq, true, true);
         fdbk_flag=true;
-
-        //store event data
-        event_name[event_counter] = 'F';
-        event_number[event_counter] = fdbk_number;
-        event_time[event_counter] = t;
-        fdbk_number++;
-        event_counter++;
+        save_data('F', fdbk_number, t);
   		}
 		}
 
@@ -450,7 +458,7 @@ void loop() {
 		//allow one more period (without stimulus)
 		if (stim_number > n_stim && (t - prevStim_t) >= isi) {
 			for (i=0; i<event_counter; i++) {
-				sprintf(message,"%c %d: %ld;",event_name[i],event_number[i],event_time[i]);
+				sprintf(message,"%c %d %ld",event_name[i],event_number[i],event_time[i]);
 				serial_print_string(message);
 			}
 			Serial.println("E");	//send END message
