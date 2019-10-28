@@ -25,8 +25,8 @@ boolean noise = false;
 
 unsigned long int t=0;
 long int prevStim_t=0,prevFdbk_t=0;
-boolean stim_flag_right=false, stim_flag_left=false;
-boolean fdbk_flag_right=false, fdbk_flag_left=false;
+boolean stim_flag=false;
+boolean fdbk_flag=false;
 
 unsigned int stimFreq = 440;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 unsigned int fdbkFreq = 660;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
@@ -106,64 +106,61 @@ static const uint8_t  sineTable[] PROGMEM = {
 ISR(TIMER1_OVF_vect) {
   // wavetable lookup index (upper 8 bits of the accumulator)
   uint8_t index1 = 0;
+  uint16_t aux1;
   
   // Update accumulator
   phaseAccumulatorStim += phaseIncrementStim;
   index1 = phaseAccumulatorStim >> 8;
 
-  // Read oscillator value for next interrupt
-  if (stimRight==true){
-    OCR1A = pgm_read_byte(&sineTable[index1]);
-    if (t-prevStim_t>STIM_DURATION && stim_flag_right==true){
-      stimRight = false;
-      stim_flag_right = false;
-    }
-  }
-  else    
-    OCR1A = vg;
+  OCR1A = vg;
+  OCR1B = vg;
 
   
-  if (stimLeft==true){
-    OCR1B = pgm_read_byte(&sineTable[index1]);
-    if (t-prevStim_t>STIM_DURATION && stim_flag_left==true){
-      stimLeft= false;
-      stim_flag_left=false;
-    }
-  }
-  else  
-    OCR1B = vg;
+ if (t-prevStim_t<STIM_DURATION){
+
+  if(stim_flag==true){
+    aux1 = pgm_read_byte(&sineTable[index1]);
+  // Read oscillator value for next interrupt
+ 
+    if (stimRight==true)  OCR1A = aux1;
+
+    if (stimLeft==true)   OCR1B = aux1;
   
+  }  
+ }
+
+else  stim_flag=false;
+
 }
 
 
 ISR(TIMER3_OVF_vect) {
   // wavetable lookup index (upper 8 bits of the accumulator)
   uint8_t index3 = 0;
+  uint16_t aux3;
+  
   // Update accumulator
   phaseAccumulatorFdbk += phaseIncrementFdbk;
   index3 = phaseAccumulatorFdbk >> 8;
 
-  // Read oscillator value for next interrupt
-  if (fdbkRight==true){
-    OCR3A = pgm_read_byte(&sineTable[index3]);
-    if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag_right==true){
-      fdbkRight = false;
-      fdbk_flag_right = false;
-    }
-  }
-  else  
-    OCR3A = vg;
+  OCR3A = vg;
+  OCR3B = vg;
 
+  if (t-prevFdbk_t<FDBK_DURATION){
+  
+    if(fdbk_flag==true){
+      aux3 = pgm_read_byte(&sineTable[index3]);
+    // Read oscillator value for next interrupt
+   
+      if (fdbkRight==true)  OCR3A = aux3;
+  
+      if (fdbkLeft==true)   OCR3B = aux3;
     
-  if (fdbkLeft==true){
-    OCR3B = pgm_read_byte(&sineTable[index3]);
-    if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag_left==true){
-      fdbkLeft = false;
-      fdbk_flag_left = false;
-    }
-  }
-  else  
-    OCR3B = vg;
+    }  
+   }
+  
+  else  fdbk_flag=false;
+  
 }
 
 
@@ -214,9 +211,6 @@ void initTimers(void){
   //TCCR2B  = _BV(CS20)   ;
   TCCR2B  = _BV(CS21)  | _BV(WGM22);
   // Fast PWM 8bits non inverted, CTC, TOF2 on TOP (OCR2A)
-
-
-  pinMode(INPUTPIN,INPUT);
 }
 
 
@@ -266,38 +260,18 @@ for 'n', freq is the amplitud in GenerateNoise, meaning the volume of the white 
 */
   switch(tipo){
     case 's':
+      phaseAccumulatorStim = 0;
       phaseIncrementStim = setFrequency(freq);
-
-      if(right){
-        stimRight = true;
-        stim_flag_right=true;
-      }
-      else stimRight = false;
-      
-      if(left){
-        stimLeft = true;
-        stim_flag_left=true;
-      }
-      else  stimLeft = false;
-      
+      stimRight = right;
+      stimLeft = left;      
       break;
       
   
     case 'f':
+      phaseAccumulatorFdbk = 0;
       phaseIncrementFdbk = setFrequency(freq);
-      
-      if(right){
-        fdbkRight    = true;
-        fdbk_flag_right = true;
-      }
-      else  fdbkRight = false;
-
-      if(left){
-        fdbkLeft     = true;
-        fdbk_flag_left = true;
-      }
-      else  fdbkLeft = false;     
-
+      fdbkRight = right;
+      fdbkLeft = left;
       break;
 
   
@@ -421,7 +395,7 @@ void get_parameters() {
 	line[i] = '\0';					//terminate the string
 
 	//just in case, clear incoming buffer once read
-	Serial.flush();
+	//Serial.flush();
 	//parse input chain into parameters
 	parse_data(line);
 	return;
@@ -450,11 +424,12 @@ void save_data(char ename, unsigned int enumber, unsigned long etime){
 void setup() {
 
   Serial.begin(9600); //USB communication with computer
-
+  pinMode(INPUTPIN,INPUT);
+  
   cli();
   
   initTimers();
-
+  
   // Unica lectura de tierra virtual hasta que el loop sea el correcto (condicion para iniciar)
   read_vg = readVirtualGround();
   vg = (int) (read_vg*256/1024);
@@ -469,6 +444,8 @@ void setup() {
 void loop() {
 
 	if(allow == false){
+    //just in case, clear incoming buffer once read
+    Serial.flush();
 		get_parameters();
 		allow = true;
 
@@ -489,20 +466,20 @@ void loop() {
     //SoundSwitch('n',1,true,true);
     
 		//send stimulus
-		if ((t-prevStim_t)> isi && (stim_flag_right==false || stim_flag_left==false)) { //enciende el sonido
-      phaseAccumulatorStim = 0;
-			SoundSwitch('s', stimFreq, SL, SR);
+		if ((t-prevStim_t)> isi && stim_flag==false) { //enciende el sonido
+      SoundSwitch('s', stimFreq, SL, SR);
       prevStim_t=t;
+      stim_flag=true;
       save_data('S', stim_number, t);
 		}
 
 		//read response
-		if ((t - prevFdbk_t) > ANTIBOUNCE && (fdbk_flag_right==false || fdbk_flag_left==false)) {
+		if ((t - prevFdbk_t) > ANTIBOUNCE && fdbk_flag==false) {
 			fdbk = digitalRead(INPUTPIN);
 			if (fdbk == HIGH){
-        phaseAccumulatorFdbk = 0;
-				SoundSwitch('f', fdbkFreq, FL, FR);
+        SoundSwitch('f', fdbkFreq, FL, FR);
         prevFdbk_t=t;
+        fdbk_flag=true;
         save_data('F', fdbk_number, t);
   		}
 		}
@@ -525,8 +502,6 @@ void loop() {
   		free(event_name);
 			free(event_number);
 			free(event_time);	
-       //just in case, clear incoming buffer once read
-      //Serial.flush();
 		}
 
 	}
