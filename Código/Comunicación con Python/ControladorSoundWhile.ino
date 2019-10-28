@@ -25,8 +25,8 @@ boolean noise = false;
 
 unsigned long int t=0;
 long int prevStim_t=0,prevFdbk_t=0;
-boolean stim_flag=false;
-boolean fdbk_flag=false;
+boolean stim_flag_right=false, stim_flag_left=false;
+boolean fdbk_flag_right=false, fdbk_flag_left=false;
 
 unsigned int stimFreq = 440;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 unsigned int fdbkFreq = 660;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
@@ -114,9 +114,9 @@ ISR(TIMER1_OVF_vect) {
   // Read oscillator value for next interrupt
   if (stimRight==true){
     OCR1A = pgm_read_byte(&sineTable[index1]);
-    if (t-prevStim_t>STIM_DURATION && stim_flag==true){
+    if (t-prevStim_t>STIM_DURATION && stim_flag_right==true){
       stimRight = false;
-      stim_flag=false;
+      stim_flag_right = false;
     }
   }
   else    
@@ -125,9 +125,9 @@ ISR(TIMER1_OVF_vect) {
   
   if (stimLeft==true){
     OCR1B = pgm_read_byte(&sineTable[index1]);
-    if (t-prevStim_t>STIM_DURATION && stim_flag==true){
+    if (t-prevStim_t>STIM_DURATION && stim_flag_left==true){
       stimLeft= false;
-      stim_flag=false;
+      stim_flag_left=false;
     }
   }
   else  
@@ -146,9 +146,9 @@ ISR(TIMER3_OVF_vect) {
   // Read oscillator value for next interrupt
   if (fdbkRight==true){
     OCR3A = pgm_read_byte(&sineTable[index3]);
-    if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag==true){
+    if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag_right==true){
       fdbkRight = false;
-      fdbk_flag=false;
+      fdbk_flag_right = false;
     }
   }
   else  
@@ -157,9 +157,9 @@ ISR(TIMER3_OVF_vect) {
     
   if (fdbkLeft==true){
     OCR3B = pgm_read_byte(&sineTable[index3]);
-    if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag==true){
+    if (t-prevFdbk_t>FDBK_DURATION && fdbk_flag_left==true){
       fdbkLeft = false;
-      fdbk_flag=false;
+      fdbk_flag_left = false;
     }
   }
   else  
@@ -214,6 +214,9 @@ void initTimers(void){
   //TCCR2B  = _BV(CS20)   ;
   TCCR2B  = _BV(CS21)  | _BV(WGM22);
   // Fast PWM 8bits non inverted, CTC, TOF2 on TOP (OCR2A)
+
+
+  pinMode(INPUTPIN,INPUT);
 }
 
 
@@ -265,10 +268,16 @@ for 'n', freq is the amplitud in GenerateNoise, meaning the volume of the white 
     case 's':
       phaseIncrementStim = setFrequency(freq);
 
-      if(right) stimRight = true;
+      if(right){
+        stimRight = true;
+        stim_flag_right=true;
+      }
       else stimRight = false;
       
-      if(left)  stimLeft = true;
+      if(left){
+        stimLeft = true;
+        stim_flag_left=true;
+      }
       else  stimLeft = false;
       
       break;
@@ -277,10 +286,16 @@ for 'n', freq is the amplitud in GenerateNoise, meaning the volume of the white 
     case 'f':
       phaseIncrementFdbk = setFrequency(freq);
       
-      if(right) fdbkRight    = true;
+      if(right){
+        fdbkRight    = true;
+        fdbk_flag_right = true;
+      }
       else  fdbkRight = false;
 
-      if(left)  fdbkLeft     = true;
+      if(left){
+        fdbkLeft     = true;
+        fdbk_flag_left = true;
+      }
       else  fdbkLeft = false;     
 
       break;
@@ -335,8 +350,10 @@ void parse_data(char *line) {
         switch (field[1]){
           case 'R':
             SR = true;
+            SL = false;
             break;
           case 'L':
+            SR = false;
             SL = true;
             break;
           case 'B':
@@ -472,22 +489,20 @@ void loop() {
     //SoundSwitch('n',1,true,true);
     
 		//send stimulus
-		if ((t-prevStim_t)> isi && stim_flag==false) { //enciende el sonido
+		if ((t-prevStim_t)> isi && (stim_flag_right==false || stim_flag_left==false)) { //enciende el sonido
       phaseAccumulatorStim = 0;
 			SoundSwitch('s', stimFreq, SL, SR);
       prevStim_t=t;
-      stim_flag=true;
       save_data('S', stim_number, t);
 		}
 
 		//read response
-		if ((t - prevFdbk_t) > ANTIBOUNCE && fdbk_flag==false) {
+		if ((t - prevFdbk_t) > ANTIBOUNCE && (fdbk_flag_right==false || fdbk_flag_left==false)) {
 			fdbk = digitalRead(INPUTPIN);
 			if (fdbk == HIGH){
         phaseAccumulatorFdbk = 0;
-				prevFdbk_t=t;
 				SoundSwitch('f', fdbkFreq, FL, FR);
-        fdbk_flag=true;
+        prevFdbk_t=t;
         save_data('F', fdbk_number, t);
   		}
 		}
