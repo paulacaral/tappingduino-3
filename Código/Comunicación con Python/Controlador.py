@@ -10,30 +10,44 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 #%%
-arduino = serial.Serial('/dev/ttyACM0', 9600)
 
+#arduino = serial.Serial('/dev/ttyACM0', 9600)
+arduino = serial.Serial('/COM3', 9600)
 
 #%% definitions
 
 ISI = 500;		# interstimulus interval (milliseconds)
-N_stim = 5;	# number of bips within a sequence
+N_stim = 10;	# number of bips within a sequence
 
-cant_trials = 1;
 #%%
 # fprintf(ardu,'ARDU;I%d;N%d;P%d;B%d;E%d;X',[ISI N_stim 100 10 3]);	% send parameters
 
 name = raw_input("Ingrese su nombre: ")
 
+cant_trials = 1;
+trial = 0
+
+#name = "fijo";
 bloque = 1;
-for trial in range(cant_trials):
-    raw_input("Press Enter to start trial")
-    timestr = time.strftime("%Y_%m_%d-%H:%M:%S")
+raw_input("Press Enter to start trial")
+timestr = time.strftime("%Y_%m_%d-%H.%M.%S")
+filename_valid_trials = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-trials.txt" 
+f_trial = open(filename_valid_trials,"a+")
+           
+while (trial < cant_trials):
+    # Genero todos los archivos: crudo, stim, resp y asynch
     filename_raw = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-raw.txt"
     filename_stim = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-stim.txt"
-    filename_fdbk = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-fdbk.txt"
+    filename_resp = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-resp.txt"
     filename_asynch = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-asynch.txt"
     
-    
+    f_raw = open(filename_raw,"w+")
+    f_stim = open(filename_stim,"w+")
+    f_resp = open(filename_resp,"w+")
+    f_asynch = open(filename_asynch,"w+")
+
+
+        
     espera = random.randrange(10,20,1)/10.0
     time.sleep(espera)
     
@@ -45,10 +59,10 @@ for trial in range(cant_trials):
     data = []
     aux = arduino.readline()
     while (aux[0]!='E'):
-        data.append(aux)
+        data.append(aux);
+        f_raw.write(aux); # guarda los datos crudos
         aux = arduino.readline();
         
-
     # Separa los datos en tipo, numero y tiempo
     e_total = len(data)
     e_type = []
@@ -61,28 +75,39 @@ for trial in range(cant_trials):
     
     # Separa numero y tiempo segun si corresponden a feedback o estimulo
     stim_number = []
-    fdbk_number = []
+    resp_number = []
     stim_time = []
-    fdbk_time = []
+    resp_time = []
     
     for events in range(e_total):
         if e_type[events]=='S':
             stim_number.append(e_number[events])
             stim_time.append(e_time[events])
+            f_stim.write(str(e_time[events])+"\n")   
+
             
         if e_type[events]=='F':
-            fdbk_number.append(e_number[events])
-            fdbk_time.append(e_time[events])
-            
+            resp_number.append(e_number[events])
+            resp_time.append(e_time[events])
+            f_resp.write(str(e_time[events])+"\n")
+
     long_stim = len(stim_time)
-    long_fdbk = len(fdbk_time)
+    long_resp = len(resp_time)
+
+
+               
+    f_raw.close()
+    f_stim.close()        
+    f_resp.close()
+
+
     # Calcula asincronias 
     
     j = 0 #contador de estimulos
-    i = long_fdbk-1 #contador de respuestas
+    i = long_resp-1 #contador de respuestas
     
     while j < long_stim:
-        diff = stim_time[j]-fdbk_time[0]
+        diff = stim_time[j]-resp_time[0]
         if abs(diff)<200:
             indice_primer_stim = j
             break;
@@ -90,63 +115,44 @@ for trial in range(cant_trials):
             j = j+1
     
     while i > 0:
-        diff = stim_time[long_stim-1]-fdbk_time[i]
+        diff = stim_time[long_stim-1]-resp_time[i]
         if abs(diff)<200:
-            indice_ultimo_fdbk = i+1
+            indice_ultimo_resp = i+1
             break;
         else:
             i = i-1
     
     stim_pares = stim_time[indice_primer_stim:]
-    fdbk_pares = fdbk_time[0:indice_ultimo_fdbk]
+    resp_pares = resp_time[0:indice_ultimo_resp]
     long_stim_pares = len(stim_pares)
-    long_fdbk_pares = len(fdbk_pares)
+    long_resp_pares = len(resp_pares)
     
 # Se fija si el trial es valido. Si lo es, entonces guarda los datos, calcula las asincronias y devuelve los graficos. Si no, no. 
    
-    if long_stim_pares == long_fdbk_pares:
-        
-        # Guarda datos crudos
-        f_raw = open(filename_raw,"w+")
-        f_stim = open(filename_stim,"w+")
-        f_fdbk = open(filename_fdbk,"w+")
-
-        for event in data:
-            f_raw.write(event) # guarda los datos crudos
-        
-        for event in stim_time:
-            f_stim.write(str(event)+"\n")   
-        
-        for event in fdbk_time:
-            f_fdbk.write(str(event)+"\n")
-        
-        f_raw.close()
-        f_stim.close()        
-        f_fdbk.close()
-               
-        
+    if long_stim_pares == long_resp_pares:
+                
+        f_trial.write(str(trial)+"\t 1 \n")
         # Calcula y guarda asincronias
         asynchrony = []
-        f_asynch = open(filename_asynch,"w+")
         
         for k in range(long_stim_pares):
-            asynchrony.append(stim_pares[k]-fdbk_pares[k])
-            f_asynch.write(str(stim_pares[k]-fdbk_pares[k])+"\n")
+            asynchrony.append(stim_pares[k]-resp_pares[k])
+            f_asynch.write(str(stim_pares[k]-resp_pares[k])+"\n")
     
         f_asynch.close()
     #==============================================================================
     # Grafica los resultados
 
-#        my_labels = {"stim" : "Stimulus", "fdbk" : "Feedback"}
+#        my_labels = {"stim" : "Stimulus", "resp" : "Feedback"}
 #        for j in range(long_stim):
 #            plt.axvline(x=stim_time[j],color='r',linestyle='dashed',label=my_labels["stim"])
 #            my_labels["stim"] = "_nolegend_"
 #         
-#        for k in range(long_fdbk):
-#            plt.axvline(x=fdbk_time[k],color='b',label=my_labels["fdbk"])
-#            my_labels["fdbk"] = "_nolegend_"
+#        for k in range(long_resp):
+#            plt.axvline(x=resp_time[k],color='b',label=my_labels["resp"])
+#            my_labels["resp"] = "_nolegend_"
 #           
-#        plt.axis([min(stim_time)-50,max(fdbk_time)+50,0,1])
+#        plt.axis([min(stim_time)-50,max(resp_time)+50,0,1])
 #        plt.xlabel('Tiempo[ms]',fontsize=12)
 #        plt.ylabel(' ')
 #        plt.grid()    
@@ -158,22 +164,22 @@ for trial in range(cant_trials):
     #==============================================================================
     # Grafica el rango entre el primer par estimulo-feedback que se queda y el ultimo
     
-        my_labels = {"stim" : "Stimulus", "fdbk" : "Feedback"}
+        my_labels = {"stim" : "Stimulus", "resp" : "Feedback"}
         for j in range(long_stim_pares):
             plt.axvline(x=stim_pares[j],color='y',linestyle='dashed',label=my_labels["stim"])
             my_labels["stim"] = "_nolegend_"
         
-        for k in range(long_fdbk_pares):
-            plt.axvline(x=fdbk_pares[k],color='c',label=my_labels["fdbk"])
-            my_labels["fdbk"] = "_nolegend_"
+        for k in range(long_resp_pares):
+            plt.axvline(x=resp_pares[k],color='c',label=my_labels["resp"])
+            my_labels["resp"] = "_nolegend_"
             
-        plt.axis([min(fdbk_pares)-50,max(stim_pares)+50,0,1])
+        plt.axis([min(resp_pares)-50,max(stim_pares)+50,0,1])
           
         plt.xlabel('Tiempo[ms]',fontsize=12)
         plt.ylabel(' ')
         plt.grid()    
         plt.legend(fontsize=12)
-        plt.show()
+        #plt.show()
      
     #==============================================================================
     
@@ -181,14 +187,26 @@ for trial in range(cant_trials):
     #==============================================================================
     # Grafica las asincronias    
         
+        plt.figure()
         plt.plot(asynchrony,'.')
         plt.xlabel('# beep',fontsize=12)
         plt.ylabel('Asynchrony[ms]',fontsize=12)
         plt.grid()    
-        plt.show()
+        #plt.show()
         
     #==============================================================================
 
+        trial = trial + 1;
+    
     else:
+        f_trial.write(str(trial)+"\t 0 \n")
+
+        f_asynch.close()
         print("Hay que repetir el trial")
-        # cant_trials = cant_trials+1 ---- para que esto funcione trials deberia correr en un while
+        raw_input("Press Enter to start trial")
+        trial = trial + 1;
+        cant_trials = cant_trials+1;
+        
+f_trial.close()
+    
+
