@@ -25,8 +25,8 @@ cant_trials = 2;
 bloque = 1;
 
 Posibles_SyF = ['L','R','B','N']
-Random_Cond_S = np.random.choice(Posibles_SyF, cant_trials)
-Random_Cond_F = np.random.choice(Posibles_SyF, cant_trials)
+Random_Cond_S = list(np.random.choice(Posibles_SyF, cant_trials))
+Random_Cond_F = list(np.random.choice(Posibles_SyF, cant_trials))
 #%%
 # fprintf(ardu,'ARDU;I%d;N%d;P%d;B%d;E%d;X',[ISI N_stim 100 10 3]);	% send parameters
 
@@ -40,8 +40,6 @@ timestr = time.strftime("%Y_%m_%d-%H.%M.%S")
 #==============================================================================
 
 trial = 0
-trial_cond = 0
-
 
 conditions = []
 valid_trial = []
@@ -73,8 +71,8 @@ while (trial < cant_trials):
     time.sleep(espera)
     
     
-    Stim = Random_Cond_S[trial_cond];
-    Resp = Random_Cond_F[trial_cond];
+    Stim = Random_Cond_S[trial];
+    Resp = Random_Cond_F[trial];
       
     message = ";S%c;F%c;I%d;N%d;P%d;B%d;E%d;X" % (Stim, Resp, ISI, N_stim, 100, 10, 3)
     arduino.write(message)
@@ -226,25 +224,30 @@ while (trial < cant_trials):
         #==============================================================================
     
             trial = trial + 1;
-            trial_cond = trial_cond +1;
         
         else:
             valid_trial.append(0)
+            Random_Cond_S.append(Random_Cond_S[trial])
+            Random_Cond_F.append(Random_Cond_F[trial])
     #        f_trial.write(str(trial)+"\t 0 \n")
     
     #        f_asynch.close()
-            print("Hay que repetir el trial")
+            print("Te salteaste un estimulo, hay que repetir el trial")
             trial = trial + 1;
             cant_trials = cant_trials+1;
+
                 
     else:
         print("No hubo respuestas, hay que repetir el trial")
         valid_trial.append(0)
+        Random_Cond_S.append(Random_Cond_S[trial])
+        Random_Cond_F.append(Random_Cond_F[trial])
     #        f_trial.write(str(trial)+"\t 0 \n")
     
     #        f_asynch.close()
         trial = trial + 1;
         cant_trials = cant_trials+1;
+
         
     np.savez_compressed(filename_data, crudo=data, stim=stim_time, resp=resp_time, asynch=asynchrony)
         
