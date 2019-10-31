@@ -18,18 +18,19 @@ arduino = serial.Serial('/dev/ttyACM1', 9600)
 
 ISI = 500;		# interstimulus interval (milliseconds)
 N_stim = 10;	# number of bips within a sequence
-Stim = 'R';
-Resp = 'R';
+
+cant_trials = 2;
+
+
+bloque = 1;
+
+Posibles_SyF = ['L','R','B','N']
+Random_Cond_S = np.random.choice(Posibles_SyF, cant_trials)
+Random_Cond_F = np.random.choice(Posibles_SyF, cant_trials)
 #%%
 # fprintf(ardu,'ARDU;I%d;N%d;P%d;B%d;E%d;X',[ISI N_stim 100 10 3]);	% send parameters
 
 name = raw_input("Ingrese su nombre: ")
-
-cant_trials = 1;
-trial = 0
-
-bloque = 1;
-raw_input("Press Enter to start trial")
 timestr = time.strftime("%Y_%m_%d-%H.%M.%S")
 #==============================================================================
 # 
@@ -38,14 +39,20 @@ timestr = time.strftime("%Y_%m_%d-%H.%M.%S")
 #            
 #==============================================================================
 
+trial = 0
+trial_cond = 0
+
+
 conditions = []
 valid_trial = []
 filename_trial = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-trials"
 
 while (trial < cant_trials):
+    raw_input("Press Enter to start trial")
+
 #==============================================================================
 #     # Genero todos los archivos: crudo, stim, resp y asynch
-    filename_raw = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-raw.txt"
+    filename_raw = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-raw.dat"
 #     filename_stim = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-stim.txt"
 #     filename_resp = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-resp.txt"
 #     filename_asynch = name+"-"+timestr+"-"+"bloque"+str(bloque)+"-"+"trial"+str(trial)+"-asynch.txt"
@@ -64,10 +71,15 @@ while (trial < cant_trials):
 
     espera = random.randrange(10,20,1)/10.0
     time.sleep(espera)
+    
+    
+    Stim = Random_Cond_S[trial_cond];
+    Resp = Random_Cond_F[trial_cond];
       
     message = ";S%c;F%c;I%d;N%d;P%d;B%d;E%d;X" % (Stim, Resp, ISI, N_stim, 100, 10, 3)
     arduino.write(message)
     conditions.append(message)
+    
     
     data = []
     aux = arduino.readline()
@@ -214,6 +226,7 @@ while (trial < cant_trials):
         #==============================================================================
     
             trial = trial + 1;
+            trial_cond = trial_cond +1;
         
         else:
             valid_trial.append(0)
@@ -221,7 +234,6 @@ while (trial < cant_trials):
     
     #        f_asynch.close()
             print("Hay que repetir el trial")
-            raw_input("Press Enter to start trial")
             trial = trial + 1;
             cant_trials = cant_trials+1;
                 
@@ -231,7 +243,6 @@ while (trial < cant_trials):
     #        f_trial.write(str(trial)+"\t 0 \n")
     
     #        f_asynch.close()
-        raw_input("Press Enter to start trial")
         trial = trial + 1;
         cant_trials = cant_trials+1;
         
