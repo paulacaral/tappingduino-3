@@ -11,13 +11,20 @@ import matplotlib.pyplot as plt
 import random
 #%%
 
-arduino = serial.Serial('/dev/ttyACM1', 9600)
+arduino = serial.Serial('/dev/ttyACM0', 9600)
 #arduino = serial.Serial('/COM3', 9600)
 
+
+#%%
+
+# message = ";S%c;F%c;I%d;N%d;P%d;B%d;E%d;X" % ('N', 'R', ISI, 10, 100, 10, 3)
+
+message = ";S%c;F%c;N%c;I%d;n%d;X" % ('B', 'N','N', ISI, 10)
+arduino.write(message)
 #%% definitions
 
 ISI = 500;		# interstimulus interval (milliseconds)
-N_stim = 10;	# number of bips within a sequence
+n_stim = 10;	# number of bips within a sequence
 
 cant_trials = 2;
 
@@ -74,7 +81,7 @@ while (trial < cant_trials):
     Stim = Random_Cond_S[trial];
     Resp = Random_Cond_F[trial];
       
-    message = ";S%c;F%c;I%d;N%d;P%d;B%d;E%d;X" % (Stim, Resp, ISI, N_stim, 100, 10, 3)
+    message = ";S%c;F%c;N%c;I%d;n%d;X" % (Stim, Resp,'N', ISI, n_stim)
     arduino.write(message)
     conditions.append(message)
     

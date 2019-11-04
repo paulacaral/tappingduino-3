@@ -28,7 +28,7 @@ long int prevStim_t=0,prevFdbk_t=0;
 boolean stim_flag=false;
 boolean fdbk_flag=false;
 
-unsigned int stimFreq = 440;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
+unsigned int stimFreq = 660;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 unsigned int fdbkFreq = 660;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 
 int vg = 0;
@@ -43,11 +43,11 @@ uint16_t phaseAccumulatorFdbk = 0; // 16 bit accumulator
 
 // DDS resolution
 const uint32_t freq_samp = 31180; // 16MHz/513 porque ahora el pin está en modo 9 bits
-const uint32_t resolution_DDS = pow(2,32)/freq_samp;
+const uint16_t resolution_DDS = pow(2,16)/freq_samp;
 
 
 //AGREGO
-#define STIM_DURATION 50 //stimulus duration (milliseconds)
+#define STIM_DURATION 50.59 //stimulus duration (milliseconds)
 #define FDBK_DURATION 50 //este lo agrego yo 
 #define ANTIBOUNCE (0.5*isi)//minimum interval between responses (milliseconds)
 boolean allow;
@@ -58,13 +58,13 @@ char *event_name;
 unsigned long *event_time;
 unsigned int event_counter; 
 
-unsigned int isi=300,n_stim=3; //Entiendo que son valores iniciales por las dudas 
+unsigned int isi=500,n_stim=3; //Entiendo que son valores iniciales por las dudas 
 int perturb_size=0;  // estos los agrego paraque no tire error
 unsigned int perturb_bip=0;
 unsigned int event_type=0;
 #define INPUTPIN A9
 char message[20];
-boolean SR=false, SL=false, FR=false, FL=false;
+boolean SR=false, SL=false, FR=false, FL=false, NR=false, NL=false;
 
 //////////// Set up lookup table for waveform generation
 // sine wavefunction
@@ -244,8 +244,8 @@ int readVirtualGround(void)
 
 /* Translates the desired output frequency to a phase increment to be used with the phase accumulator.*/
 uint16_t setFrequency( uint16_t frequency ){
-  uint32_t phaseIncr32 =  resolution_DDS * frequency;
-  return (phaseIncr32 >> 16);
+  uint16_t phaseIncr32 =  resolution_DDS * frequency;
+  return phaseIncr32;//(phaseIncr32 >> 16);
 }
 
 // Function to start playing sound
@@ -308,7 +308,7 @@ void parse_data(char *line) {
 			case 'I':
 				isi = data;
 				break;
-			case 'N':
+			case 'n':
 				n_stim = data;
 				break;
 			case 'P':
@@ -360,6 +360,18 @@ void parse_data(char *line) {
             break;
         }
         break;
+
+       case 'N':
+        switch (field[1]){
+          case 'B':
+            NR = true;
+            NL = true;
+            break;
+          case 'N':
+            NR = false;
+            NL = false;
+            break;
+        }
 			default:
 				break;
 		}
@@ -463,7 +475,7 @@ void loop() {
     t = millis();
 
     //turn on noise
-    //SoundSwitch('n',1,true,true);
+    SoundSwitch('n',1,NL,NR);
     
 		//send stimulus
 		if ((t-prevStim_t)> isi && stim_flag==false) { //enciende el sonido
