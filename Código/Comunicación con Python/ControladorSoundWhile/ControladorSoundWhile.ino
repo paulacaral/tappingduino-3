@@ -28,7 +28,7 @@ long int prevStim_t=0,prevFdbk_t=0;
 boolean stim_flag=false;
 boolean fdbk_flag=false;
 
-unsigned int stimFreq = 660;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
+unsigned int stimFreq = 440;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 unsigned int fdbkFreq = 660;//(C6) // defines the frequency (i.e., pitch) of the tone (in Hz)
 
 int vg = 0;
@@ -47,7 +47,7 @@ const uint16_t resolution_DDS = pow(2,16)/freq_samp;
 
 
 //AGREGO
-#define STIM_DURATION 50.59 //stimulus duration (milliseconds)
+int STIM_DURATION = 50; //stimulus duration (milliseconds)
 #define FDBK_DURATION 50 //este lo agrego yo 
 #define ANTIBOUNCE (0.5*isi)//minimum interval between responses (milliseconds)
 boolean allow;
@@ -372,6 +372,9 @@ void parse_data(char *line) {
             NL = false;
             break;
         }
+        case 'D':
+        STIM_DURATION = data;
+        break;
 			default:
 				break;
 		}
