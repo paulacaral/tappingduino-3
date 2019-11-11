@@ -39,7 +39,7 @@ uint16_t phaseIncrementStim = 0;  // 16 bit delta
 uint16_t phaseIncrementFdbk = 0; // 16 bit delta
 uint16_t phaseAccumulatorStim = 0;  // 16 bit accumulator
 uint16_t phaseAccumulatorFdbk = 0; // 16 bit accumulator
-
+int stim_counter, fdbk_counter;
 
 // DDS resolution
 const uint32_t freq_samp = 31180; // 16MHz/513 porque ahora el pin está en modo 9 bits
@@ -47,7 +47,9 @@ const uint16_t resolution_DDS = pow(2,16)/freq_samp;
 
 
 //AGREGO
-int STIM_DURATION = 50; //stimulus duration (milliseconds)
+uint16_t FDBK_DURATION_CYCLES = 23; // feedback duration (cycles)
+uint16_t STIM_DURATION_CYCLES = 23; // stimulus duration (cycles)
+#define STIM_DURATION 50 //stimulus duration (milliseconds)
 #define FDBK_DURATION 50 //este lo agrego yo 
 #define ANTIBOUNCE (0.5*isi)//minimum interval between responses (milliseconds)
 boolean allow;
@@ -111,17 +113,19 @@ ISR(TIMER1_OVF_vect) {
   // Update accumulator
   phaseAccumulatorStim += phaseIncrementStim;
   index1 = phaseAccumulatorStim >> 8;
+  if(index1 <= (phaseIncrementStim >>8))  stim_counter++; // counter aumenta cuando index1 resetea
 
   OCR1A = vg;
   OCR1B = vg;
 
   
- if (t-prevStim_t<STIM_DURATION){
-
-  if(stim_flag==true){
+// if (t-prevStim_t<STIM_DURATION){
+  if (stim_counter< STIM_DURATION_CYCLES){
+  
+   if(stim_flag==true){
     aux1 = pgm_read_byte(&sineTable[index1]);
   // Read oscillator value for next interrupt
- 
+    
     if (stimRight==true)  OCR1A = aux1;
 
     if (stimLeft==true)   OCR1B = aux1;
@@ -142,12 +146,14 @@ ISR(TIMER3_OVF_vect) {
   // Update accumulator
   phaseAccumulatorFdbk += phaseIncrementFdbk;
   index3 = phaseAccumulatorFdbk >> 8;
+  if(index3 <= (phaseIncrementFdbk >>8))  fdbk_counter++; // counter aumenta cuando index1 resetea
 
   OCR3A = vg;
   OCR3B = vg;
 
-  if (t-prevFdbk_t<FDBK_DURATION){
-  
+//  if (t-prevFdbk_t<FDBK_DURATION){
+  if (fdbk_counter< FDBK_DURATION_CYCLES){
+    
     if(fdbk_flag==true){
       aux3 = pgm_read_byte(&sineTable[index3]);
     // Read oscillator value for next interrupt
@@ -244,8 +250,12 @@ int readVirtualGround(void)
 
 /* Translates the desired output frequency to a phase increment to be used with the phase accumulator.*/
 uint16_t setFrequency( uint16_t frequency ){
-  uint16_t phaseIncr32 =  resolution_DDS * frequency;
-  return phaseIncr32;//(phaseIncr32 >> 16);
+  uint16_t phaseIncr16 =  resolution_DDS * frequency;
+  return phaseIncr16;//(phaseIncr32 >> 16);
+}
+
+uint16_t setCycles( uint16_t frequency ){
+  return 0.05*frequency;
 }
 
 // Function to start playing sound
@@ -262,6 +272,8 @@ for 'n', freq is the amplitud in GenerateNoise, meaning the volume of the white 
     case 's':
       phaseAccumulatorStim = 0;
       phaseIncrementStim = setFrequency(freq);
+      stim_counter = 0;
+      STIM_DURATION_CYCLES = setCycles(freq);
       stimRight = right;
       stimLeft = left;      
       break;
@@ -270,6 +282,8 @@ for 'n', freq is the amplitud in GenerateNoise, meaning the volume of the white 
     case 'f':
       phaseAccumulatorFdbk = 0;
       phaseIncrementFdbk = setFrequency(freq);
+      fdbk_counter = 0;
+      FDBK_DURATION_CYCLES = setCycles(freq);
       fdbkRight = right;
       fdbkLeft = left;
       break;
@@ -298,28 +312,28 @@ void serial_print_string(char *string) {
 //parse data from serial input
 //input data format: eg "I500;N30;P-10;B15;E5;X"
 void parse_data(char *line) {
-	char field[10];
-	int n,data;
-	//scan input until next ';' (field separator)
-	while (sscanf(line,"%[^;]%n",field,&n) == 1) {
-		data = atoi(field+1);
-		//parse data according to field header
-		switch (field[0]) {
-			case 'I':
-				isi = data;
-				break;
-			case 'n':
-				n_stim = data;
-				break;
-			case 'P':
-				perturb_size = data;
-				break;
-			case 'B':
-				perturb_bip = data;
+  char field[10];
+  int n,data;
+  //scan input until next ';' (field separator)
+  while (sscanf(line,"%[^;]%n",field,&n) == 1) {
+    data = atoi(field+1);
+    //parse data according to field header
+    switch (field[0]) {
+      case 'I':
+        isi = data;
         break;
-			case 'E':
-				event_type = data;
-				break;
+      case 'n':
+        n_stim = data;
+        break;
+      case 'P':
+        perturb_size = data;
+        break;
+      case 'B':
+        perturb_bip = data;
+        break;
+      case 'E':
+        event_type = data;
+        break;
       case 'S':
         switch (field[1]){
           case 'R':
@@ -372,19 +386,16 @@ void parse_data(char *line) {
             NL = false;
             break;
         }
-        case 'D':
-        STIM_DURATION = data;
+      default:
         break;
-			default:
-				break;
-		}
-		line += n+1;
-//		if (*line != ';')
-	//		break;
-//		while (*line == ';')
-//			line++;
-	}
-	return;
+    }
+    line += n+1;
+//    if (*line != ';')
+  //    break;
+//    while (*line == ';')
+//      line++;
+  }
+  return;
 }
 
 
@@ -392,28 +403,28 @@ void parse_data(char *line) {
 
 void get_parameters() {
   char line[45];
-	char i,aux='0';
-	i = 0;
+  char i,aux='0';
+  i = 0;
 
-	//directly read next available character from buffer
-	//if flow ever gets here, then next available character should be 'I'
-	aux = Serial.read();
+  //directly read next available character from buffer
+  //if flow ever gets here, then next available character should be 'I'
+  aux = Serial.read();
 
-	//read buffer until getting an X (end of message)
-	while (aux != 'X') {
-		//keep reading if input buffer is empty
-		while (Serial.available() < 1) {}
-		line[i] = aux;
-		i++;
-		aux = Serial.read();
-	}
-	line[i] = '\0';					//terminate the string
+  //read buffer until getting an X (end of message)
+  while (aux != 'X') {
+    //keep reading if input buffer is empty
+    while (Serial.available() < 1) {}
+    line[i] = aux;
+    i++;
+    aux = Serial.read();
+  }
+  line[i] = '\0';         //terminate the string
 
-	//just in case, clear incoming buffer once read
-	//Serial.flush();
-	//parse input chain into parameters
-	parse_data(line);
-	return;
+  //just in case, clear incoming buffer once read
+  //Serial.flush();
+  //parse input chain into parameters
+  parse_data(line);
+  return;
 }
 
 //---------------------------------------------------------------------
@@ -458,67 +469,67 @@ void setup() {
 
 void loop() {
 
-	if(allow == false){
+  if(allow == false){
     //just in case, clear incoming buffer once read
     Serial.flush();
-		get_parameters();
-		allow = true;
+    get_parameters();
+    allow = true;
 
-		stim_number = 1;
-		fdbk_number = 1;
-		event_counter = 0;
-		
-		event_name = (char*) calloc(3*n_stim,sizeof(char));
-		event_number = (unsigned int*) calloc(3*n_stim,sizeof(unsigned int));
-		event_time = (unsigned long*) calloc(3*n_stim,sizeof(unsigned long));
+    stim_number = 1;
+    fdbk_number = 1;
+    event_counter = 0;
+    
+    event_name = (char*) calloc(3*n_stim,sizeof(char));
+    event_number = (unsigned int*) calloc(3*n_stim,sizeof(unsigned int));
+    event_time = (unsigned long*) calloc(3*n_stim,sizeof(unsigned long));
 
-	}
+  }
 
-	else{
+  else{
     t = millis();
 
     //turn on noise
     SoundSwitch('n',1,NL,NR);
     
-		//send stimulus
-		if ((t-prevStim_t)> isi && stim_flag==false) { //enciende el sonido
+    //send stimulus
+    if ((t-prevStim_t)> isi && stim_flag==false) { //enciende el sonido
       SoundSwitch('s', stimFreq, SL, SR);
       prevStim_t=t;
       stim_flag=true;
       save_data('S', stim_number, t);
-		}
+    }
 
-		//read response
-		if ((t - prevFdbk_t) > ANTIBOUNCE && fdbk_flag==false) {
-			fdbk = digitalRead(INPUTPIN);
-			if (fdbk == HIGH){
+    //read response
+    if ((t - prevFdbk_t) > ANTIBOUNCE && fdbk_flag==false) {
+      fdbk = digitalRead(INPUTPIN);
+      if (fdbk == HIGH){
         SoundSwitch('f', fdbkFreq, FL, FR);
         prevFdbk_t=t;
         fdbk_flag=true;
         save_data('F', fdbk_number, t);
-  		}
-		}
+      }
+    }
 
-		//end trial
-		//allow one more period (without stimulus)
-		if (stim_number > n_stim && (t - prevStim_t) >= isi) {
-			for (i=0; i<event_counter; i++) {
-				sprintf(message,"%c %d %ld",event_name[i],event_number[i],event_time[i]);
-				serial_print_string(message);
-			}
-			Serial.println("E");	//send END message
-			allow = false;
+    //end trial
+    //allow one more period (without stimulus)
+    if (stim_number > n_stim && (t - prevStim_t) >= isi) {
+      for (i=0; i<event_counter; i++) {
+        sprintf(message,"%c %d %ld",event_name[i],event_number[i],event_time[i]);
+        serial_print_string(message);
+      }
+      Serial.println("E");  //send END message
+      allow = false;
 
       //turn off noise 
       SoundSwitch('s',1,false,false);
       SoundSwitch('f',1,false,false);
       SoundSwitch('n',1,false,false);
 
-  		free(event_name);
-			free(event_number);
-			free(event_time);	
-		}
+      free(event_name);
+      free(event_number);
+      free(event_time); 
+    }
 
-	}
+  }
   
 }
