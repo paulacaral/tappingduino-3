@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-# -*- coding: utf-8 -*-
 """
 Created on Thu Oct 17 11:04:30 2019
 
@@ -11,15 +11,15 @@ import matplotlib.pyplot as plt
 import random
 #%%
 
-#arduino = serial.Serial('/dev/ttyACM0', 9600)
-arduino = serial.Serial('/COM3', 9600)
+arduino = serial.Serial('/dev/ttyACM0', 9600)
+#arduino = serial.Serial('/COM3', 9600)
 
 
 #%%
 
 # message = ";S%c;F%c;I%d;N%d;P%d;B%d;E%d;X" % ('N', 'R', ISI, 10, 100, 10, 3)
 
-message = ";S%c;F%c;N%c;I%d;n%d;D%d;X" % ('B', 'B','N', 500, 10, 98.6)
+message = ";S%c;F%c;N%c;I%d;n%d;X" % ('B', 'B','N', 500, 10)
 arduino.write(message)
 #%% definitions
 
