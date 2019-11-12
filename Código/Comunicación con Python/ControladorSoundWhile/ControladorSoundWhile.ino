@@ -386,6 +386,11 @@ void parse_data(char *line) {
             NL = false;
             break;
         }
+       
+       case 'A':
+        amplitude = data;
+        break; 
+        
       default:
         break;
     }
@@ -489,7 +494,7 @@ void loop() {
     t = millis();
 
     //turn on noise
-    SoundSwitch('n',1,NL,NR);
+    SoundSwitch('n',amplitude,NL,NR);
     
     //send stimulus
     if ((t-prevStim_t)> isi && stim_flag==false) { //enciende el sonido
