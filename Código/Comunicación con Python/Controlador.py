@@ -11,29 +11,50 @@ import matplotlib.pyplot as plt
 import random
 #%%
 
-arduino = serial.Serial('/dev/ttyACM0', 9600)
-#arduino = serial.Serial('/COM3', 9600)
+#arduino = serial.Serial('/dev/ttyACM0', 9600)
+arduino = serial.Serial('/COM4', 9600)
 
 
 #%%
 
 # message = ";S%c;F%c;I%d;N%d;P%d;B%d;E%d;X" % ('N', 'R', ISI, 10, 100, 10, 3)
 
-message = ";S%c;F%c;N%c;I%d;n%d;X" % ('B', 'B','N', 500, 10)
+message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('L', 'N','N', 1, 500, 100)
 arduino.write(message)
 #%% definitions
 
 ISI = 500;		# interstimulus interval (milliseconds)
 n_stim = 10;	# number of bips within a sequence
 
-cant_trials = 2;
-
 
 bloque = 1;
 
-Posibles_SyF = ['L','R','B','N']
-Random_Cond_S = list(np.random.choice(Posibles_SyF, cant_trials))
-Random_Cond_F = list(np.random.choice(Posibles_SyF, cant_trials))
+Posibles_SyF = [['L','L'],
+                ['L','R'],
+                ['L','N'],
+                ['R','L'],
+                ['R','R'],
+                ['R','N'],
+                ['B','L'],
+                ['B','R'],
+                ['B','N'],
+                ]
+
+cant_cada_cond = 2
+vector_condiciones= []
+for i in range(cant_cada_cond):
+    for j in range(6,9):
+        vector_condiciones.append(Posibles_SyF[j])
+    
+random.shuffle(vector_condiciones)
+
+cant_trials = len(vector_condiciones)
+
+Random_Cond_S = []
+Random_Cond_F = []
+for i in range(len(vector_condiciones)):
+    Random_Cond_S.append(vector_condiciones[i][0])
+    Random_Cond_F.append(vector_condiciones[i][1])
 #%%
 # fprintf(ardu,'ARDU;I%d;N%d;P%d;B%d;E%d;X',[ISI N_stim 100 10 3]);	% send parameters
 
