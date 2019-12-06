@@ -9,6 +9,7 @@ import serial, time
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import os
 
 #%% Description
 
@@ -18,15 +19,14 @@ import random
 #         - a file per trial containing extracted data from it
 #==============================================================================
 
-
 #%% Communicate with arduino
 
-arduino = serial.Serial('/dev/ttyACM0', 9600)
+arduino = serial.Serial('/dev/ttyACM1', 9600)
 #arduino = serial.Serial('/COM4', 9600)
 
 #%% mensaje de prueba
 
-message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('R', 'R','B', 1, 500, 100)
+message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('L', 'N','B', 1, 500, 100)
 arduino.write(message)
 #%% definitions
 
@@ -41,25 +41,52 @@ condition_dictionary = {"LL": 0,"LR": 1,"LN": 2,"RL": 3,"RR": 4,"RN": 5,"BL": 6,
 
 # conditions chosen for the experiment
 conditions_chosen_index = [
-  condition_dictionary["LL"],
-]
+  condition_dictionary["LL"]]
 #  condition_dictionary["LR"],
 #  condition_dictionary["RL"],
 #  condition_dictionary["RR"]
 #];
 
 # total number of blocks
-N_blocks = 2;
+N_blocks = 1;
 # number of trials per condition per block
 N_trials_per_block_per_cond = 1
 
+#%% names
+
+filename_names = "Dic_names_pseud.dat"
+
+try:
+    f_names = open(filename_names,"r")
+
+    if os.stat(filename_names).st_size == 0:
+        print('esta vacio')        
+        next_subject_number = '001';
+        f_names.close();
+    else:
+        print('tiene algo')
+        content = f_names.read();
+        print(content[-3:]);
+        last_subject_number = int(content [-3:]);
+        next_subject_number = '{0:0>3}'.format(last_subject_number + 1);
+        print(next_subject_number)
+        f_names.close()
+        
+except IOError:
+    print('El archivo no esta donde deberia, ubicalo en la carpeta correcta y volve a correr esta celda')       
+
+# set subject name for filename
+name = raw_input("Ingrese su nombre: ") 
+
+f_names = open(filename_names,"a")
+f_names.write('\n'+name+'\tS'+next_subject_number)
+f_names.close()
+
+ 
 #%% run blocks
 
 # block counter
 block = 1; 
-
-# set subject name for filename
-name = raw_input("Ingrese su nombre: ") 
 
 while (block <= N_blocks):
     
@@ -91,17 +118,17 @@ while (block <= N_blocks):
     valid_trial = [] # vector that will contain 1 if the trial was valid or 0 if it wasn't
     
     # generate filename for file that will contain all conditions used in the trial along with the valid_trials vector    
-    filename_block = name+"-"+timestr+"-"+"block"+str(block)+"-trials" 
+    filename_block = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-trials" 
     
     while (trial < N_trials_per_block):
         raw_input("Press Enter to start trial")
     
         # generate raw data file 
-        filename_raw = name+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)+"-raw.dat"
+        filename_raw = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)+"-raw.dat"
         f_raw = open(filename_raw,"w+")
      
         # generate extracted fata file name (will save raw data, stimulus time, feedback time and asynchrony)
-        filename_data = name+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)
+        filename_data = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)
             
         # wait random number of seconds before actually starting the trial
         wait = random.randrange(10,20,1)/10.0
@@ -112,7 +139,7 @@ while (block <= N_blocks):
         Resp = Fdbk_conds[trial];
           
         # send message with conditions to arduino
-        message = ";S%c;F%c;N%c;I%d;n%d;X" % (Stim, Resp,'N', ISI, n_stim)
+        message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % (Stim, Resp,'B', 3, ISI, n_stim)
         arduino.write(message)
         conditions.append(message)
         
@@ -155,6 +182,7 @@ while (block <= N_blocks):
         # close raw data file    
         f_raw.close()
         
+        print('llegue hasta aca')
         # ---------------------------------------------------------------
         # Asynchronies calculation
     
@@ -278,6 +306,7 @@ while (block <= N_blocks):
     block = block + 1;
     
     print("Fin del bloque!")
+
 
 #%% Loading data
 
