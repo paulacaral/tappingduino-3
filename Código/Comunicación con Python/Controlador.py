@@ -21,13 +21,14 @@ import os
 
 #%% Communicate with arduino
 
-arduino = serial.Serial('/dev/ttyACM1', 9600)
+arduino = serial.Serial('/dev/ttyACM0', 9600)
 #arduino = serial.Serial('/COM4', 9600)
 
 #%% mensaje de prueba
 
-message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('L', 'N','B', 1, 500, 100)
+message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('L', 'B','B', 1, 500, 50)
 arduino.write(message)
+
 #%% definitions
 
 ISI = 500;		# interstimulus interval (milliseconds)
@@ -41,16 +42,16 @@ condition_dictionary = {"LL": 0,"LR": 1,"LN": 2,"RL": 3,"RR": 4,"RN": 5,"BL": 6,
 
 # conditions chosen for the experiment
 conditions_chosen_index = [
-  condition_dictionary["LL"]]
-#  condition_dictionary["LR"],
-#  condition_dictionary["RL"],
-#  condition_dictionary["RR"]
-#];
+  condition_dictionary["LL"],
+  condition_dictionary["LR"],
+  condition_dictionary["RL"],
+  condition_dictionary["RR"]
+];
 
 # total number of blocks
-N_blocks = 1;
+N_blocks = 2;
 # number of trials per condition per block
-N_trials_per_block_per_cond = 1
+N_trials_per_block_per_cond = 2;
 
 #%% names
 
@@ -60,16 +61,16 @@ try:
     f_names = open(filename_names,"r")
 
     if os.stat(filename_names).st_size == 0:
-        print('esta vacio')        
+        #print('esta vacio')        
         next_subject_number = '001';
         f_names.close();
     else:
-        print('tiene algo')
+        #print('tiene algo')
         content = f_names.read();
-        print(content[-3:]);
+       #print(content[-3:]);
         last_subject_number = int(content [-3:]);
         next_subject_number = '{0:0>3}'.format(last_subject_number + 1);
-        print(next_subject_number)
+        #print(next_subject_number)
         f_names.close()
         
 except IOError:
@@ -85,10 +86,7 @@ f_names.close()
  
 #%% run blocks
 
-# block counter
-block = 1; 
-
-while (block <= N_blocks):
+for (block in range(N_blocks)):
     
     condition_vector = [] # vector that will contain each condition the specified amount of times (it's important to restart it here!)
     for i in range(N_trials_per_block_per_cond):
@@ -121,13 +119,13 @@ while (block <= N_blocks):
     filename_block = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-trials" 
     
     while (trial < N_trials_per_block):
-        raw_input("Press Enter to start trial")
+        raw_input("Press Enter to start trial (%d/%d)" % (trial,N_trials_per_block));
     
         # generate raw data file 
         filename_raw = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)+"-raw.dat"
         f_raw = open(filename_raw,"w+")
      
-        # generate extracted fata file name (will save raw data, stimulus time, feedback time and asynchrony)
+        # generate extracted data file name (will save raw data, stimulus time, feedback time and asynchrony)
         filename_data = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)
             
         # wait random number of seconds before actually starting the trial
@@ -171,7 +169,7 @@ while (block <= N_blocks):
                 stim_number.append(e_number[events])
                 stim_time.append(e_time[events])
                 
-            if e_type[events]=='F':
+            if e_type[events]=='R':
                 resp_number.append(e_number[events])
                 resp_time.append(e_time[events])
     
@@ -182,7 +180,6 @@ while (block <= N_blocks):
         # close raw data file    
         f_raw.close()
         
-        print('llegue hasta aca')
         # ---------------------------------------------------------------
         # Asynchronies calculation
     
@@ -302,8 +299,6 @@ while (block <= N_blocks):
             
     # SAVE DATA FROM BLOCK (VALID AND INVALID TRIALS AND THEIR CONDITIONS)    
     np.savez_compressed(filename_block,trials=valid_trial,conditions=conditions)
-    # go to next block
-    block = block + 1;
     
     print("Fin del bloque!")
 
