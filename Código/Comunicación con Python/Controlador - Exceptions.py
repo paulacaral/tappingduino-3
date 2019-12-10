@@ -21,8 +21,8 @@ import os
 
 #%% Communicate with arduino
 
-arduino = serial.Serial('/dev/ttyACM0', 9600)
-#arduino = serial.Serial('/COM4', 9600)
+#arduino = serial.Serial('/dev/ttyACM0', 9600)
+arduino = serial.Serial('/COM3', 9600)
 
 #%% mensaje de prueba
 
@@ -59,7 +59,7 @@ conditions_chosen_index = [
 # total number of blocks
 N_blocks = 1;
 # number of trials per condition per block
-N_trials_per_block_per_cond = 2;
+N_trials_per_block_per_cond = 1;
 
 
 #%% names
@@ -92,7 +92,7 @@ f_names = open(filename_names,"a")
 f_names.write('\n'+name+'\tS'+next_subject_number)
 f_names.close()
 
- 
+#%% 
 # run blocks
 
 for block in range(N_blocks):
@@ -202,8 +202,11 @@ for block in range(N_blocks):
                 j = 0; # stimulus counter
                 k = 0; # responses counter for finding first stimuli with decent response
                 i = N_resp-1; # responses counter for finding last stimuli with response
+                first_stim_responded_index = 0;
+                last_resp_index = 0;
                 first_stim_responded_flag = False; # flag if there was a stimuli with a recent response
                 last_resp_flag = False;                
+                
                 
                 # find first stimulus with a decent response
                 while k < 2: # if neither the first or second response doesn't match with any of the 5 first stimuli, then re-do the trial     
@@ -215,7 +218,10 @@ for block in range(N_blocks):
                             break;
                         else:
                             j = j+1;
-                    k = k+1;
+                    if first_stim_responded_flag == True:
+                        break;
+                    else:
+                        k = k+1;
                 
                 if first_stim_responded_flag == True:
                     pass;
@@ -229,24 +235,25 @@ for block in range(N_blocks):
                 while i > 0:
                     diff = stim_time[N_stim-1]-resp_time[i]
                     if abs(diff)<200:
-                        last_resp_index = i;
+                        last_resp_index = i+1;
                         last_resp_flag = True;
                         break;
                     else:
                         i = i-1;
+                        
+                if last_resp_flag == True:
+                    pass;
+                else:
+                    print("El ultimo estimulo no tiene respuesta")
+                    errors.append('NoLastResp')
+                    raise Error 
                             
                 
                 # new vectors of stimulus and responses that only contain those that have a pair of the other type        
                 stim_paired = stim_time[first_stim_responded_index:]
-                resp_paired = resp_time[:last_resp_index]
+                resp_paired = resp_time[k:last_resp_index]
                 N_stim_paired = len(stim_paired)
                 N_resp_paired = len(resp_paired)
-                
-                print(N_stim_paired)
-                print(N_resp_paired)   
-                print(j, first_stim_responded_index)
-
-                print(i, last_resp_index)  
                 
                 if N_stim_paired == N_resp_paired:
                             
