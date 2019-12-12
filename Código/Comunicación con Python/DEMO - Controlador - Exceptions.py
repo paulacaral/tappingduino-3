@@ -43,25 +43,23 @@ n_stim = 10;	# number of bips within a sequence
 all_conditions = [['L','L'], ['L','R'], ['L','N'], ['R','L'], ['R','R'], ['R','N'], ['B','L'], ['B','R'], ['B','N'],['B','B']];
 
 # condition dictionary so we can choose the condition without going through number position
-condition_dictionary = {"LL": 0,"LR": 1,"LN": 2,"RL": 3,"RR": 4,"RN": 5,"BL": 6,"BR": 7,"BN": 8,"BB": 9};
+condition_dictionary = {"LL": 0,"LR": 1,"LN": 2,"RL": 3,"RR": 4,"RN": 5,"BL": 6,"BR": 7,"BN": 8, "BB": 9};
 
 # conditions chosen for the experiment
 conditions_chosen_index = [
+  condition_dictionary["BB"],  
   condition_dictionary["LL"],
-  condition_dictionary["LR"],
-  condition_dictionary["RL"],
-  condition_dictionary["RR"],
-  condition_dictionary["BB"]
-];
+  condition_dictionary["RR"]
+  ];
 
 # total number of blocks
 N_blocks = 1;
 # number of trials per condition per block
-N_trials_per_block_per_cond = 3;
+N_trials_per_block_per_cond = 2;
 
 #%% names
 
-filename_names = "/home/paula/Tappingduino3/tappingduino-3-master/Datos/Dic_names_pseud.dat"
+filename_names = "/home/paula/Tappingduino3/tappingduino-3-master/DEMO Datos/DEMO_Dic_names_pseud.dat"
 
 try:
     f_names = open(filename_names,"r")
@@ -124,11 +122,11 @@ for block in range(N_blocks):
         raw_input("Press Enter to start trial (%d/%d)" % (trial+1,N_trials_per_block));
     
         # generate raw data file 
-        filename_raw = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)+"-raw.dat"
+        filename_raw = 'DEMO-S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)+"-raw.dat"
         f_raw = open(filename_raw,"w+")
      
         # generate extracted data file name (will save raw data, stimulus time, feedback time and asynchrony)
-        filename_data = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)
+        filename_data = 'DEMO-S'+next_subject_number+"-"+timestr+"-"+"block"+str(block)+"-"+"trial"+str(trial)
             
         # wait random number of seconds before actually starting the trial
         wait = random.randrange(10,20,1)/10.0
@@ -326,17 +324,5 @@ for block in range(N_blocks):
     
     print("Fin del bloque!")
 
-     #%% Loading data
-
-npztrial = np.load(filename_block+".npz")
-# sorted(npztrial) # Me muestra todo lo que tiene adentro
-npztrial["trials"]
-npztrial["conditions"]
-
-
-trial1 = np.load(filename_data+".npz")
-
-trial1["raw"]
-trial1["stim"]
-trial1["resp"]
-trial1["asynch"]
+#%% Clear variables!
+%reset -f
