@@ -21,21 +21,18 @@ import os
 
 #%% Communicate with arduino
 
-#arduino = serial.Serial('/dev/ttyACM0', 9600)
-arduino = serial.Serial('/COM3', 9600)
+arduino = serial.Serial('/dev/ttyACM0', 9600)
+#arduino = serial.Serial('/COM3', 9600)
 
 #%% mensaje de prueba
 
-message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('L', 'B','B', 1, 500, 50)
+message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('L', 'L','N', 3, 500, 50)
 arduino.write(message)
 
 #%%
 # define Python user-defined exceptions
 class Error(Exception):
    """Base class for other exceptions"""
-   pass
-class NoResponses(Error):
-   """Raised when there were no responses"""
    pass
 #%% definitions
 
@@ -59,27 +56,22 @@ conditions_chosen_index = [
 # total number of blocks
 N_blocks = 1;
 # number of trials per condition per block
-N_trials_per_block_per_cond = 1;
-
+N_trials_per_block_per_cond = 3;
 
 #%% names
 
-filename_names = "Dic_names_pseud.dat"
+filename_names = "/home/paula/Tappingduino3/tappingduino-3-master/Datos/Dic_names_pseud.dat"
 
 try:
     f_names = open(filename_names,"r")
 
     if os.stat(filename_names).st_size == 0:
-        #print('esta vacio')        
         next_subject_number = '001';
         f_names.close();
     else:
-        #print('tiene algo')
         content = f_names.read();
-       #print(content[-3:]);
         last_subject_number = int(content [-3:]);
         next_subject_number = '{0:0>3}'.format(last_subject_number + 1);
-        #print(next_subject_number)
         f_names.close()
         
 except IOError:
@@ -92,7 +84,6 @@ f_names = open(filename_names,"a")
 f_names.write('\n'+name+'\tS'+next_subject_number)
 f_names.close()
 
-#%% 
 # run blocks
 
 for block in range(N_blocks):
@@ -209,24 +200,19 @@ for block in range(N_blocks):
                 
                 
                 # find first stimulus with a decent response
-                while k < 2: # if neither the first or second response doesn't match with any of the 5 first stimuli, then re-do the trial     
-                    while j < 5: # if the response doesn't match with any of the 5 first stimuli, then re-do the trial
-                        diff = stim_time[j]-resp_time[k];
-                        if abs(diff)<200:
-                            first_stim_responded_index = j;
-                            first_stim_responded_flag = True;
-                            break;
-                        else:
-                            j = j+1;
-                    if first_stim_responded_flag == True:
+                while j < 5: # if the response doesn't match with any of the 5 first stimuli, then re-do the trial
+                    diff = stim_time[j]-resp_time[k];
+                    if abs(diff)<200:
+                        first_stim_responded_index = j;
+                        first_stim_responded_flag = True;
                         break;
                     else:
-                        k = k+1;
+                        j = j+1;
+
                 
                 if first_stim_responded_flag == True:
                     pass;
                 else:
-                    print("No hay una primera respuesta decente")
                     errors.append('NoFirstResp')
                     raise Error 
                                 
@@ -235,7 +221,7 @@ for block in range(N_blocks):
                 while i > 0:
                     diff = stim_time[N_stim-1]-resp_time[i]
                     if abs(diff)<200:
-                        last_resp_index = i+1;
+                        last_resp_index = i;
                         last_resp_flag = True;
                         break;
                     else:
@@ -244,14 +230,13 @@ for block in range(N_blocks):
                 if last_resp_flag == True:
                     pass;
                 else:
-                    print("El ultimo estimulo no tiene respuesta")
                     errors.append('NoLastResp')
                     raise Error 
                             
                 
                 # new vectors of stimulus and responses that only contain those that have a pair of the other type        
                 stim_paired = stim_time[first_stim_responded_index:]
-                resp_paired = resp_time[k:last_resp_index]
+                resp_paired = resp_time[k:(last_resp_index+1)]
                 N_stim_paired = len(stim_paired)
                 N_resp_paired = len(resp_paired)
                 
@@ -265,31 +250,10 @@ for block in range(N_blocks):
                     for k in range(N_stim_paired):
                         asynchrony.append(stim_paired[k]-resp_paired[k])
         
-                   
                 #==============================================================================
                 # Plot all pair of stimulus and feedback
-                    my_labels = {"stim" : "Stimulus", "resp" : "Feedback"}
-                    for j in range(N_stim_paired):
-                        plt.axvline(x=stim_paired[j],color='y',linestyle='dashed',label=my_labels["stim"])
-                        my_labels["stim"] = "_nolegend_"
-                    
-                    for k in range(N_resp_paired):
-                        plt.axvline(x=resp_paired[k],color='c',label=my_labels["resp"])
-                        my_labels["resp"] = "_nolegend_"
-                        
-                    plt.axis([min(resp_paired)-50,max(stim_paired)+50,0,1])
-                      
-                    plt.xlabel('Tiempo[ms]',fontsize=12)
-                    plt.ylabel(' ')
-                    plt.grid()    
-                    plt.legend(fontsize=12)
-                    #plt.show()  
-                #==============================================================================
-                
-                #==============================================================================
-                # Plot all pair of stimulus and feedback
-                    plt.figure()
-                    my_labels = {"stim" : "Stimulus", "resp" : "Feedback"}
+                    plt.figure(1)
+                    my_labels = {"stim" : "Stimulus", "resp" : "Response"}
                     for j in range(N_stim):
                         plt.axvline(x=stim_time[j],color='b',linestyle='dashed',label=my_labels["stim"])
                         my_labels["stim"] = "_nolegend_"
@@ -297,41 +261,45 @@ for block in range(N_blocks):
                     for k in range(N_resp):
                         plt.axvline(x=resp_time[k],color='r',label=my_labels["resp"])
                         my_labels["resp"] = "_nolegend_"
+                    
+                # Put a yellow star on the stimulus that have a paired response.
+                    for j in range(N_stim_paired):
+                        plt.plot(stim_paired[j],0.5,'*',color='y')
                         
-                    plt.axis([min(stim_time)-50,max(stim_time)+50,0,1])
+                    plt.axis([min(stim_time)-50,max(resp_time)+50,0,1])
                       
                     plt.xlabel('Tiempo[ms]',fontsize=12)
                     plt.ylabel(' ')
                     plt.grid()    
                     plt.legend(fontsize=12)
-                    #plt.show()  
+                    plt.show()  
                 #==============================================================================
-
-
-            
+           
                 #==============================================================================
                 # Plot asynchronies
-                    plt.figure()
-                    plt.plot(asynchrony,'.')
+                    plt.figure(2)
+                    plt.plot(asynchrony,'.-')
                     plt.xlabel('# beep',fontsize=12)
                     plt.ylabel('Asynchrony[ms]',fontsize=12)
                     plt.grid()    
-                    #plt.show()   
+                    plt.show()   
                 #==============================================================================
             
                     # go to next trial
                     trial = trial + 1;
                 
-                else: # if subject skipped an stimuli
-                    # trial is not valid! then:
-                    print("Te salteaste un estimulo, hay que repetir el trial")
-                    errors.append('SkipStim')
+                else:
+                    if N_stim_paired > N_resp_paired:# if subject skipped an stimuli
+                        # trial is not valid! then:
+                        errors.append('SkipStim')
+                    else: 
+                        errors.append('TooManyResp')
+                    
                     raise Error
                     
                       
             else: # if there were no responses
                 # trial is not valid! then:
-                print("No hubo respuestas, hay que repetir el trial")
                 errors.append('NoResp')  
                 raise Error
              
@@ -357,8 +325,7 @@ for block in range(N_blocks):
     
     print("Fin del bloque!")
 
-
-#%% Loading data
+     #%% Loading data
 
 npztrial = np.load(filename_block+".npz")
 # sorted(npztrial) # Me muestra todo lo que tiene adentro
