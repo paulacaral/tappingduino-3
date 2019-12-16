@@ -63,13 +63,14 @@ all_possible_orders_conditions = list(permutations(conditions_chosen_index))
 # total number of blocks (equal to number of conditions since we have one condition per block)
 N_blocks = len(conditions_chosen_index);
 # number of trials per condition per block
-N_trials_per_block_per_cond = 12;
+N_trials_per_block_per_cond = 2;
 
-print("CHEQUEA QUE LA CARPETA DE TRABAJO SEA LA CORRECTA")
+print("CHEQUEA LA CARPETA DE TRABAJO PARA QUE LOS DATOS SE GUARDEN EN EL LUGAR CORRECTO")
+
 #%% Experiment
 
 # check for file with names and pseudonyms
-filename_names = "/home/paula/Tappingduino3/tappingduino-3-master/Datos/Dic_names_pseud.dat"
+filename_names = "/home/paula/Tappingduino3/tappingduino-3-master/DEMO Datos/DEMO_Dic_names_pseud.dat"
 
 try:
     f_names = open(filename_names,"r")
