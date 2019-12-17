@@ -27,8 +27,8 @@ arduino = serial.Serial('/dev/ttyACM0', 9600)
 
 #%% Test arduino communication
 
-#message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('R', 'L','B', 3, 500, 20)
-#arduino.write(message)
+message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('R', 'L','B', 3, 500, 10)
+arduino.write(message)
 
 #%% Definitions
 
@@ -40,7 +40,7 @@ class Error(Exception):
 # define variables
 
 ISI = 500;		# interstimulus interval (milliseconds)
-n_stim = 10;	# number of bips within a sequence
+n_stim = 15;	# number of bips within a sequence
 
 # all possible conditions for stimulus and feedback
 all_conditions = [['L','L'], ['L','R'], ['L','N'], ['R','L'], ['R','R'], ['R','N'], ['B','L'], ['B','R'], ['B','N'],['B','B']];
@@ -64,8 +64,6 @@ all_possible_orders_conditions = list(permutations(conditions_chosen_index))
 N_blocks = len(conditions_chosen_index);
 # number of trials per condition per block
 N_trials_per_block_per_cond = 2;
-
-print("CHEQUEA LA CARPETA DE TRABAJO PARA QUE LOS DATOS SE GUARDEN EN EL LUGAR CORRECTO")
 
 #%% Experiment
 
@@ -130,7 +128,7 @@ while (block_counter < N_blocks):
     errors = [] # vector that will contain the type of error that ocurred if any did    
     
     # generate filename for file that will contain all conditions used in the trial along with the valid_trials vector    
-    filename_block = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-trials" 
+    filename_block = '/home/paula/Tappingduino3/tappingduino-3-master/DEMO Datos/DEMO-S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-trials" 
     
     while (trial < N_trials_per_block):
         raw_input("Press Enter to start trial (%d/%d)" % (trial+1,N_trials_per_block));
@@ -138,11 +136,11 @@ while (block_counter < N_blocks):
         plt.close(2)
         
         # generate raw data file 
-        filename_raw = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)+"-raw.dat"
+        filename_raw = '/home/paula/Tappingduino3/tappingduino-3-master/DEMO Datos/DEMO-S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)+"-raw.dat"
         f_raw = open(filename_raw,"w+")
      
         # generate extracted data file name (will save raw data, stimulus time, feedback time and asynchrony)
-        filename_data = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)
+        filename_data = '/home/paula/Tappingduino3/tappingduino-3-master/DEMO Datos/DEMO-S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)
             
         # wait random number of seconds before actually starting the trial
         wait = random.randrange(10,20,1)/10.0
@@ -395,29 +393,29 @@ plt.grid()
 
 #%% Loading data
 
-def Loading_data(subject_number,block, trial, *asked_data):
-    # IMPORTANTE: DAR INPUTS COMO STRING
-
-    if trial is None:
-        file_to_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trials.npz")    
-    else:
-        file_to_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trial"+str(trial)+".npz")    
-    
-    print(file_to_load[0])
-    npz = np.load(file_to_load[0])
-    if len(asked_data) == 0:
-        print("The file contains:")
-        return sorted(npz)
-    else:
-        data_to_return = []
-        for a in asked_data:
-            data_to_return.append(npz[a])                                
-        return data_to_return[:]
-
-
-
-asynch = Loading_data('002',0,1,'asynch')
-plt.plot(asynch[0],'.-')
-plt.xlabel('# beep',fontsize=12)
-plt.ylabel('Asynchrony[ms]',fontsize=12)
-plt.grid() 
+#def Loading_data(subject_number,block, trial, *asked_data):
+#    # IMPORTANTE: DAR INPUTS COMO STRING
+#
+#    if trial is None:
+#        file_to_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trials.npz")    
+#    else:
+#        file_to_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trial"+str(trial)+".npz")    
+#    
+#    print(file_to_load[0])
+#    npz = np.load(file_to_load[0])
+#    if len(asked_data) == 0:
+#        print("The file contains:")
+#        return sorted(npz)
+#    else:
+#        data_to_return = []
+#        for a in asked_data:
+#            data_to_return.append(npz[a])                                
+#        return data_to_return[:]
+#
+#
+#
+#asynch = Loading_data('002',0,1,'asynch')
+#plt.plot(asynch[0],'.-')
+#plt.xlabel('# beep',fontsize=12)
+#plt.ylabel('Asynchrony[ms]',fontsize=12)
+#plt.grid() 

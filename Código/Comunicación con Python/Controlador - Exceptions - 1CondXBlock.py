@@ -12,6 +12,8 @@ import random
 import os
 from itertools import permutations 
 import glob
+import pickle
+
 #%% Description
 
 #==============================================================================
@@ -29,18 +31,11 @@ arduino = serial.Serial('/dev/ttyACM0', 9600)
 
 #message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('R', 'L','B', 3, 500, 20)
 #arduino.write(message)
+#arduino.reset_input_buffer()
+#%% Conditions
 
-#%% Definitions
-
-# define Python user-defined exceptions
-class Error(Exception):
-   """Base class for other exceptions"""
-   pass
-
-# define variables
-
-ISI = 500;		# interstimulus interval (milliseconds)
-n_stim = 10;	# number of bips within a sequence
+# filename for file that will contain all possible conditions permutations
+filename_orders = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/Posibles_permutaciones_condiciones.dat'
 
 # all possible conditions for stimulus and feedback
 all_conditions = [['L','L'], ['L','R'], ['L','N'], ['R','L'], ['R','R'], ['R','N'], ['B','L'], ['B','R'], ['B','N'],['B','B']];
@@ -48,24 +43,61 @@ all_conditions = [['L','L'], ['L','R'], ['L','N'], ['R','L'], ['R','R'], ['R','N
 # condition dictionary so we can choose the condition without going through number position
 condition_dictionary = {"LL": 0,"LR": 1,"LN": 2,"RL": 3,"RR": 4,"RN": 5,"BL": 6,"BR": 7,"BN": 8,"BB": 9};
 
-# conditions chosen for the experiment
-conditions_chosen_index = [
-  condition_dictionary["LL"],
-  condition_dictionary["LR"],
-  condition_dictionary["RL"],
-  condition_dictionary["RR"],
-  condition_dictionary["BB"]
-];
+binary_response = raw_input("Es la primera vez que corres este experimento/piloto? [y/n] ") 
 
-# list of all possible permutations of conditions
-all_possible_orders_conditions = list(permutations(conditions_chosen_index))
+# if this is the first time running the experiment, then it's necessary to generate the file with all possible permutations
+if binary_response == 'y':
+    raw_input("Elija las condiciones que quiere usar separandolas por Enters. Al finalizar vuelva a presionar Enter.")
 
+    # vector that will contain all conditions needed for this experiment    
+    inputs = []
+    while True:
+        inp = raw_input()
+        if inp == "":
+            break
+        inputs.append(inp)   
+        
+    # finding the conditions index in the dictionary
+    conditions_chosen_index = []
+    for condition in inputs:
+        conditions_chosen_index.append(condition_dictionary[condition])
+        
+    # find all possible permutations of these conditions    
+    all_possible_orders_conditions = list(permutations(conditions_chosen_index))
+    # save them in a file
+    with open(filename_orders, 'wb') as fp:
+        pickle.dump(all_possible_orders_conditions, fp)
+    
+# if this isn't the first time running the experiment, the file with all possible permutations should already exist and have the information of the permutations already used by subjects (those permutations will no longer be in the file)
+else:
+    # try to find the file. If it doesn't exist in the directory, raise an error.
+    try:
+        f_orders = open(filename_orders,"r")
+        pass
+        
+    except IOError:
+        print('El archivo con las permutaciones de las condiciones no esta donde deberia, ubicalo en la carpeta correcta y volve a correr esta celda')
+        raise
+    
+#%% Definitions
+
+# Define variables
+
+ISI = 500;		# interstimulus interval (milliseconds)
+n_stim =50;	# number of bips within a sequence
+
+with open (filename_orders, 'rb') as fp:
+    content = pickle.load(fp)
 # total number of blocks (equal to number of conditions since we have one condition per block)
-N_blocks = len(conditions_chosen_index);
+N_blocks = len(content[0]);
 # number of trials per condition per block
 N_trials_per_block_per_cond = 12;
 
-print("CHEQUEA QUE LA CARPETA DE TRABAJO SEA LA CORRECTA")
+# Define Python user-defined exceptions
+class Error(Exception):
+   """Base class for other exceptions"""
+   pass
+
 #%% Experiment
 
 # check for file with names and pseudonyms
@@ -94,9 +126,15 @@ f_names = open(filename_names,"a")
 f_names.write('\n'+name+'\tS'+next_subject_number)
 f_names.close()
 
-cond_order_block = random.choice(all_possible_orders_conditions)
+with open (filename_orders, 'rb') as fp:
+    content = pickle.load(fp)
+    
+cond_order_block = random.choice(content)
 
-all_possible_orders_conditions.pop(all_possible_orders_conditions.index(cond_order_block))
+content.pop(content.index(cond_order_block))
+
+with open(filename_orders, 'wb') as fp:
+    pickle.dump(content, fp)
 
 # run blocks
 block_counter = 0;
@@ -116,7 +154,7 @@ while (block_counter < N_blocks):
         Fdbk_conds.append(condition_vector[i][1])
     
     # run one block
-    raw_input("Press Enter to start block")    
+    raw_input("Presione Enter para comenzar el bloque (%d/%d)" %  (block_counter+1,N_blocks));
     
     # set time for file name
     timestr = time.strftime("%Y_%m_%d-%H.%M.%S")
@@ -129,19 +167,19 @@ while (block_counter < N_blocks):
     errors = [] # vector that will contain the type of error that ocurred if any did    
     
     # generate filename for file that will contain all conditions used in the trial along with the valid_trials vector    
-    filename_block = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-trials" 
+    filename_block = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-trials" 
     
     while (trial < N_trials_per_block):
-        raw_input("Press Enter to start trial (%d/%d)" % (trial+1,N_trials_per_block));
+        raw_input("Presione Enter para comenzar el trial (%d/%d)" % (trial+1,N_trials_per_block));
         plt.close(1)
         plt.close(2)
         
         # generate raw data file 
-        filename_raw = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)+"-raw.dat"
+        filename_raw = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)+"-raw.dat"
         f_raw = open(filename_raw,"w+")
      
         # generate extracted data file name (will save raw data, stimulus time, feedback time and asynchrony)
-        filename_data = 'S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)
+        filename_data = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)
             
         # wait random number of seconds before actually starting the trial
         wait = random.randrange(10,20,1)/10.0
@@ -155,7 +193,8 @@ while (block_counter < N_blocks):
         message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % (Stim, Resp,'B', 3, ISI, n_stim)
         arduino.write(message)
         conditions.append(message)
-        
+        #time.sleep(25)            
+
         # read information from arduino
         data = []
         aux = arduino.readline()
@@ -163,7 +202,8 @@ while (block_counter < N_blocks):
             data.append(aux);
             f_raw.write(aux); # save raw data
             aux = arduino.readline();
-            
+
+        
         # Separates data in type, number and time
         e_total = len(data)
         e_type = []
@@ -264,7 +304,7 @@ while (block_counter < N_blocks):
                     
                     # Calculate and save asynchronies
                     for k in range(N_stim_paired):
-                        asynchrony.append(stim_paired[k]-resp_paired[k])
+                        asynchrony.append(resp_paired[k]-stim_paired[k])
         
                 #==============================================================================
                 # Plot all pair of stimulus and feedback
@@ -414,8 +454,8 @@ def Loading_data(subject_number,block, trial, *asked_data):
         return data_to_return[:]
 
 
-
-asynch = Loading_data('002',0,1,'asynch')
+#%%
+asynch = Loading_data('003',3,3,'asynch')
 plt.plot(asynch[0],'.-')
 plt.xlabel('# beep',fontsize=12)
 plt.ylabel('Asynchrony[ms]',fontsize=12)
