@@ -6,7 +6,7 @@ IC1       LM324N  LM324N          DIL14        OP AMP                           
 LED1              LED_ELD260      LED_LD260    LED                                                                        DMOD       D                        diode    
 LED2              LED_ELD260      LED_LD260    LED                                                                        DMOD       D                        diode    
 PHONES    1503_09 1503_09         1503_09      Jack connectors according to JISC 6560, 3.5 mm        1243244    unknown              X                                 
-PIN2              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
+PIN2              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 soy juancito
 PIN5              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
 PIN6              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
 PIN7              PINHD-1X1       1X01         PIN HEADER                                                                            X                                 
