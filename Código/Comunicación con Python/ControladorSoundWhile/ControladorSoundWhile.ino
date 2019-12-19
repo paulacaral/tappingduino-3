@@ -415,6 +415,18 @@ void get_parameters() {
   //if flow ever gets here, then next available character should be 'I'
   aux = Serial.read();
 
+  while (Serial.available() < 1) {
+      t = millis();
+      //allow user to tap while waiting for data from computer
+      if ((t - prevFdbk_t) > ANTIBOUNCE && fdbk_flag==false) {        
+        fdbk = digitalRead(INPUTPIN);
+        if (fdbk == HIGH){
+          SoundSwitch('f', fdbkFreq, true, true);
+          prevFdbk_t=t;
+          fdbk_flag=true;
+        }
+      } 
+   }
   //read buffer until getting an X (end of message)
   while (aux != 'X') {
     //keep reading if input buffer is empty
@@ -426,7 +438,7 @@ void get_parameters() {
   line[i] = '\0';         //terminate the string
 
   //just in case, clear incoming buffer once read
-  //Serial.flush();
+  Serial.flush();
   //parse input chain into parameters
   parse_data(line);
   return;
@@ -475,8 +487,10 @@ void setup() {
 void loop() {
 
   if(allow == false){
+      
     //just in case, clear incoming buffer once read
     Serial.flush();
+        
     get_parameters();
     allow = true;
 
@@ -487,7 +501,6 @@ void loop() {
     event_name = (char*) calloc(3*n_stim,sizeof(char));
     event_number = (unsigned int*) calloc(3*n_stim,sizeof(unsigned int));
     event_time = (unsigned long*) calloc(3*n_stim,sizeof(unsigned long));
-
   }
 
   else{
