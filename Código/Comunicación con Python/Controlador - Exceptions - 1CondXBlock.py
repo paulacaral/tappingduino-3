@@ -29,13 +29,20 @@ arduino = serial.Serial('/dev/ttyACM0', 9600)
 
 #%% Test arduino communication
 
-#message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('R', 'L','B', 3, 500, 20)
+#message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % ('R', 'L','B', 3, 500, 10)
 #arduino.write(message)
-#arduino.reset_input_buffer()
+#
+## after test message, get the data sent from arduino since with just flushing wont work correctly after.
+#data_test = []
+#aux_test = arduino.readline()
+#while (aux_test[0]!='E'):
+#    data_test.append(aux_test);
+#    aux_test = arduino.readline();
+
 #%% Conditions
 
 # filename for file that will contain all possible conditions permutations
-filename_orders = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/Posibles_permutaciones_condiciones.dat'
+filename_orders = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/Posibles_permutaciones_condiciones_probando.dat'
 
 # all possible conditions for stimulus and feedback
 all_conditions = [['L','L'], ['L','R'], ['L','N'], ['R','L'], ['R','R'], ['R','N'], ['B','L'], ['B','R'], ['B','N'],['B','B']];
@@ -84,14 +91,14 @@ else:
 # Define variables
 
 ISI = 500;		# interstimulus interval (milliseconds)
-n_stim =50;	# number of bips within a sequence
+n_stim =30;	# number of bips within a sequence
 
 with open (filename_orders, 'rb') as fp:
     content = pickle.load(fp)
 # total number of blocks (equal to number of conditions since we have one condition per block)
 N_blocks = len(content[0]);
 # number of trials per condition per block
-N_trials_per_block_per_cond = 12;
+N_trials_per_block_per_cond = 1;
 
 # Define Python user-defined exceptions
 class Error(Exception):
@@ -247,14 +254,12 @@ while (block_counter < N_blocks):
                 j = 0; # stimulus counter
                 k = 0; # responses counter for finding first stimuli with decent response
                 i = N_resp-1; # responses counter for finding last stimuli with response
-                first_stim_responded_index = 0;
-                last_resp_index = 0;
                 first_stim_responded_flag = False; # flag if there was a stimuli with a recent response
                 last_resp_flag = False;                
                 
                 
                 # find first stimulus with a decent response
-                while j < 5: # if the response doesn't match with any of the 5 first stimuli, then re-do the trial
+                while j < 5: # if the first response doesn't match with any of the 5 first stimuli, then re-do the trial
                     diff = stim_time[j]-resp_time[k];
                     if abs(diff)<200:
                         first_stim_responded_index = j;
@@ -291,21 +296,29 @@ while (block_counter < N_blocks):
                             
                 
                 # new vectors of stimulus and responses that only contain those that have a pair of the other type        
-                stim_paired = stim_time[first_stim_responded_index:]
-                resp_paired = resp_time[k:(last_resp_index+1)]
+                stim_paired = stim_time[first_stim_responded_index:N_stim]
+                resp_paired = resp_time[0:(last_resp_index+1)]
                 N_stim_paired = len(stim_paired)
                 N_resp_paired = len(resp_paired)
                 
                 if N_stim_paired == N_resp_paired:
-                            
-                    # the trial is valid! then:
-                    valid_trial.append(1)
-                    errors.append('NoError')                    
+                                      
                     
                     # Calculate and save asynchronies
                     for k in range(N_stim_paired):
-                        asynchrony.append(resp_paired[k]-stim_paired[k])
-        
+                        diff = resp_paired[k]-stim_paired[k]
+                        if abs(diff)<200:
+                            asynchrony.append(diff)
+                        else:
+                            print('Error tipo OOT')
+                            errors.append('OutOfThreshold')
+                            raise Error
+                            
+                             
+                    # if the code got here, then the trial is valid!:
+                    valid_trial.append(1)
+                    errors.append('NoError') 
+                    
                 #==============================================================================
                 # Plot all pair of stimulus and feedback
 #                    plt.figure(1)
@@ -404,36 +417,54 @@ print("Fin del experimento!")
 
 #%% A look at the last trial
 
-plt.figure(1)
-my_labels = {"stim" : "Stimulus", "resp" : "Response"}
-for j in range(N_stim):
-    plt.axvline(x=stim_time[j],color='b',linestyle='dashed',label=my_labels["stim"])
-    my_labels["stim"] = "_nolegend_"
 
-for k in range(N_resp):
-    plt.axvline(x=resp_time[k],color='r',label=my_labels["resp"])
-    my_labels["resp"] = "_nolegend_"
-
-# Put a yellow star on the stimulus that have a paired response.
-for j in range(N_stim_paired):
-    plt.plot(stim_paired[j],0.5,'*',color='y')
+def Plot_RespStim(stim_vector,resp_vector):
+    N_stim = len(stim_vector)
+    N_resp = len(resp_vector)
+    #plt.figure()
+    my_labels = {"stim" : "Stimulus", "resp" : "Response"}
+    for j in range(N_stim):
+        plt.axvline(x=stim_vector[j],color='b',linestyle='dashed',label=my_labels["stim"])
+        my_labels["stim"] = "_nolegend_"
     
-plt.axis([min(stim_time)-50,max(resp_time)+50,0,1])
-  
-plt.xlabel('Tiempo[ms]',fontsize=12)
-plt.ylabel(' ')
-plt.grid()    
-plt.legend(fontsize=12)
+    for k in range(N_resp):
+        plt.axvline(x=resp_vector[k],color='r',label=my_labels["resp"])
+        my_labels["resp"] = "_nolegend_"
 
-plt.figure(2)
-plt.plot(asynchrony,'.-')
-plt.xlabel('# beep',fontsize=12)
-plt.ylabel('Asynchrony[ms]',fontsize=12)
-plt.grid() 
+
+    plt.axis([min(stim_vector)-100,max(resp_vector)+100,0,1])
+      
+    plt.xlabel('Tiempo[ms]',fontsize=12)
+    plt.ylabel(' ')
+    plt.grid()    
+    plt.legend(fontsize=12)
+
+ #Put a yellow star on the stimulus that have a paired response.
+#for j in range(N_stim_paired):
+#    plt.plot(stim_paired[j],0.5,'*',color='y')
+#    
+    
+#my_labels = {"stim-paired" : "Stimulus-paired", "resp-paired" : "Response-paired"}
+#for j in range(N_stim_paired):
+#    plt.axvline(x=stim_paired[j],color='y',linestyle='dashed',label=my_labels["stim-paired"])
+#    my_labels["stim-paired"] = "_nolegend_"
+##
+#for k in range(N_resp_paired):
+#    plt.axvline(x=resp_paired[k],color='c',label=my_labels["resp-paired"])
+#    my_labels["resp-paired"] = "_nolegend_"    
+#    
+
+def Plot_asynch(asynch_vector):
+    plt.figure(2)
+    plt.plot(asynch_vector,'.-')
+    plt.xlabel('# beep',fontsize=12)
+    plt.ylabel('Asynchrony[ms]',fontsize=12)
+    plt.grid() 
 
 
 #%% Loading data
 
+# Function for loading data specific data from either the block or trial files.
 def Loading_data(subject_number,block, trial, *asked_data):
     # IMPORTANTE: DAR INPUTS COMO STRING
 
@@ -442,7 +473,6 @@ def Loading_data(subject_number,block, trial, *asked_data):
     else:
         file_to_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trial"+str(trial)+".npz")    
     
-    print(file_to_load[0])
     npz = np.load(file_to_load[0])
     if len(asked_data) == 0:
         print("The file contains:")
@@ -454,9 +484,51 @@ def Loading_data(subject_number,block, trial, *asked_data):
         return data_to_return[:]
 
 
-#%%
-asynch = Loading_data('003',3,3,'asynch')
+#%% Testing Loading_data and plotting asynchronies
+
+asynch = Loading_data('006',0,1,'asynch')
 plt.plot(asynch[0],'.-')
 plt.xlabel('# beep',fontsize=12)
 plt.ylabel('Asynchrony[ms]',fontsize=12)
 plt.grid() 
+
+
+#%% Load asynchronies
+
+# Loads all asynchronies for a subject for an specific block and returns all plots
+def Loading_asynch(subject_number,block):
+    file_to_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trials.npz")    
+    npz = np.load(file_to_load[0])
+    trials = npz['trials']
+    
+    valid_index = []
+    for i in range(len(trials)):
+        if trials[i] == 1:
+            valid_index.append(i)
+    
+    for trial in valid_index:
+        file_to_load_trial = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trial"+str(trial)+".npz")    
+        npz_trial = np.load(file_to_load_trial[0])
+        asynch_trial = npz_trial['asynch']
+        plt.plot(asynch_trial,'.-', label = 'trial %d' % trial)
+    plt.xlabel('# beep',fontsize=12)
+    plt.ylabel('Asynchrony[ms]',fontsize=12)
+    plt.grid()  
+    plt.legend()
+
+    return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
