@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 05 15:45:53 2020
+Created on Wed Mar 11 11:25:14 2020
 
-@author: Paula
+@author: paula
 """
+
 import serial, time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,49 +13,75 @@ import os
 from itertools import permutations 
 import glob
 import pickle
+import pandas as pd
+#%% Load raw file for trial
+# Loads raw file for trial and creates a vector data that emulates exactly what it would get from arduino in real time in an experiment.
 
+subject_number = '003'
+block = 3
+trial = 2
+filename_raw_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"-*-block"+str(block)+"-trial"+str(trial)+"-raw.dat")
 
-#%% Loading data
+df = pd.read_table(filename_raw_load[0], sep="\s+",header=None)
 
-# Function for loading data specific data from either the block or trial files.
-def Loading_data(subject_number,block, trial, *asked_data):
-    # IMPORTANTE: DAR INPUTS COMO STRING
-    # Hay que darle si o si numero de sujeto y bloque y el trial puede estar especificado o ser None. Recordar que los archivos que no tienen identificado el trial tienen guardada la informacion de todo el bloque: condicion usada, errores, percepcion del sujeto y si el trial fue valido o invalido. En cambio, al especificar el trial se tiene la informacion de cada trial particular, es decir, asincronias, datos crudos, respuestas y estimulos.
+data = []
 
-    if trial is None:
-        #file_to_load = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Codigo\2020\DATOS/S'+subject_number+"*-block"+str(block)+"-trials.npz")
-       file_to_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trials.npz")    
-    else:
-        #file_to_load = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Codigo\2020\DATOS/S'+subject_number+"*-block"+str(block)+"-trial"+str(trial)+".npz")    
-    
-        file_to_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"*-block"+str(block)+"-trial"+str(trial)+".npz")    
-    
-    npz = np.load(file_to_load[0])
-    if len(asked_data) == 0:
-        print("The file contains:")
-        return sorted(npz)
-    else:
-        data_to_return = []
-        for a in asked_data:
-            data_to_return.append(npz[a])                                
-        return data_to_return[:]
+for j in range(len(df)):    
+    x = []
+    for i in range(3):
+        x.append(str(df[i][j]))
+    y = ' '.join(x)
+    data.append(y)
 
+data
 
-class Error(Exception):
-   """Base class for other exceptions"""
-   pass
-#%% Simulo datos
+#%% Process the data
 
-stim_time_not = Loading_data('001',1,16,'stim')
-resp_time_not = Loading_data('001',1,16,'resp')
-stim_time = stim_time_not[0]
-resp_time = resp_time_not[0]
+# read information from arduino
+#data = []
+#aux = arduino.readline()
+#while (aux[0]!='E'):
+#    data.append(aux);
+#    f_raw.write(aux); # save raw data
+#    aux = arduino.readline();
+#
+
+# Separates data in type, number and time
+e_total = len(data)
+e_type = []
+e_number = []
+e_time = []
+for event in data:
+    e_type.append(event.split()[0])
+    e_number.append(int(event.split()[1]))
+    e_time.append(int(event.split()[2]))
+
+# Separates number and time according to if it comes from stimulus or response
+stim_number = []
+resp_number = []
+stim_time = []
+resp_time = []
+for events in range(e_total):
+    if e_type[events]=='S':
+        stim_number.append(e_number[events])
+        stim_time.append(e_time[events])
+        
+    if e_type[events]=='R':
+        resp_number.append(e_number[events])
+        resp_time.append(e_time[events])
+
+# determine number of stimulus and responses registered
 N_stim = len(stim_time)
 N_resp = len(resp_time)
 
-#%%
-errors = []
-valid_trial = []
+# close raw data file    
+#f_raw.close()
+
+#%% Data is put to the test to know if the trial is valid or invalid
+# ---------------------------------------------------------------
+# Asynchronies calculation
+
+# vector that will contain asynchronies if they are calculated
 asynchrony = []
 
 try: 
@@ -116,7 +143,6 @@ try:
             # Calculate and save asynchronies
             for k in range(N_stim_paired):
                 diff = resp_paired[k]-stim_paired[k]
-                print(diff)
                 if abs(diff)<200:
                     asynchrony.append(diff)
                 else:
@@ -164,7 +190,7 @@ try:
         #==============================================================================
     
             # go to next trial
-#            trial = trial + 1;
+            trial = trial + 1;
         
         else:
             if N_stim_paired > N_resp_paired: # if subject skipped an stimuli
@@ -189,15 +215,15 @@ try:
 except (Error):
     # trial is not valid! then:
     valid_trial.append(0)
-    print('Hubo un raise error')
+        
     # appends conditions for this trial at the end of the conditions vectors, so that it can repeat at the end
-#    Stim_conds.append(Stim_conds[trial])
-#    Fdbk_conds.append(Fdbk_conds[trial])
+    #Stim_conds.append(Stim_conds[trial])
+    #Fdbk_conds.append(Fdbk_conds[trial])
   
     # go to next trial
-#    trial = trial + 1;
+    trial = trial + 1;
     # add 1 to number of trials per block since will have to repeat one
-#    N_trials_per_block = N_trials_per_block + 1;
+    #N_trials_per_block = N_trials_per_block + 1;
 
 # SAVE DATA FROM TRIAL (VALID OR NOT)
 #np.savez_compressed(filename_data, raw=data, stim=stim_time, resp=resp_time, asynch=asynchrony)
