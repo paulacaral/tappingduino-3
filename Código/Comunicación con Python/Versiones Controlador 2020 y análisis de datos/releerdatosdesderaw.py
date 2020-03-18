@@ -27,11 +27,11 @@ class Error(Exception):
 
 def Check_trials(subject_number,cant_total_block):
     for block in range(cant_total_block):
-        aux = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\2020\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"*-raw.dat")
+        aux = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Analisis de datos\Experimento Piloto Dic2019\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"*-raw.dat")
         errors = []
         valid_trial = []
         for trial in range(len(aux)):
-            filename_raw_load = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\2020\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"-trial"+str(trial)+"-raw.dat")
+            filename_raw_load = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Analisis de datos\Experimento Piloto Dic2019\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"-trial"+str(trial)+"-raw.dat")
             df = pd.read_table(filename_raw_load[0], sep="\s+",header=None)
 
             data = []
@@ -200,7 +200,7 @@ block = 1
 trial = 2
 #filename_raw_load = glob.glob('/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+subject_number+"-*-block"+str(block)+"-trial"+str(trial)+"-raw.dat")
 
-filename_raw_load = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\2020\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"-trial"+str(trial)+"-raw.dat")
+filename_raw_load = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Analisis de datos\Experimento Piloto Dic2019\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"-trial"+str(trial)+"-raw.dat")
 
 df = pd.read_table(filename_raw_load[0], sep="\s+",header=None)
 

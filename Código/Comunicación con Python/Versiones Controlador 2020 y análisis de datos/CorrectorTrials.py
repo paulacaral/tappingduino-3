@@ -33,3 +33,39 @@ def Corregir_validez_trials(subject_number,block,trial_to_modify,validation,erro
     else:
         raise
         
+        
+#%%
+
+def Corregir_signos_asynch(subject_number,cant_total_block):
+    for block in range(cant_total_block):
+        aux = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Analisis de datos\Experimento Piloto Dic2019\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"-trial*.npz")
+        for trial in range(len(aux)-1):
+            filename = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Analisis de datos\Experimento Piloto Dic2019\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"-trial"+str(trial)+".npz")
+            filedic = dict(np.load(filename[0]))
+            for i in range(len(filedic['asynch'])):
+                filedic['asynch'][i]=-filedic['asynch'][i]
+                
+            np.savez(filename[0], **filedic)
+
+#%%
+
+def Check_signs(subject_number):
+    for block in range(5):
+        aux = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Analisis de datos\Experimento Piloto Dic2019\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal/S'+subject_number+"-*-block"+str(block)+"-trial*.npz")
+        for trial in range(len(aux)-1):
+            a = Loading_data(subject_number,block,trial,'asynch')
+            b = Loading_data_orig(subject_number,block,trial,'asynch')
+            
+            a_ = a[0]
+            b_ = b[0]
+            for i in range(len(a_)):
+                if (a_[i] == -b_[i]):
+                    pass
+                else:
+                    print('oops, chequea')
+                    print(block)
+                    print(trial)
+                    break
+
+            print('todo bien por acá')
+
