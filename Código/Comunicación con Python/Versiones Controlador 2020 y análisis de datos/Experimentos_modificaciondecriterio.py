@@ -106,6 +106,8 @@ class Error(Exception):
    """Base class for other exceptions"""
    pass
 
+class Escape(Exception):
+    pass
 #%% Experiment
 
 # check for file with names and pseudonyms
@@ -147,253 +149,272 @@ with open(filename_orders, 'wb') as fp:
 # run blocks
 block_counter = 0;
 
-while (block_counter < N_blocks):
-    
-    condition_vector = [] # vector that will contain the specified condition the correct amount of times (it's important to restart it here!)
-    for i in range(N_trials_per_block_per_cond):
-        condition_vector.append(all_conditions[cond_order_block[block_counter]])
-    # total number of trials per block
-    N_trials_per_block = len(condition_vector) # unlike N_trials_per_block_per_cond this variable will change if a trial goes wrong
-
-    Stim_conds = [] # vector that will contain all stimulus conditions
-    Fdbk_conds = [] # vector that will contain all feedback conditions
-    for i in range(len(condition_vector)):
-        Stim_conds.append(condition_vector[i][0])
-        Fdbk_conds.append(condition_vector[i][1])
-    
-    # run one block
-    raw_input("Presione Enter para comenzar el bloque (%d/%d)" %  (block_counter+1,N_blocks));
-    
-    # set time for file name
-    timestr = time.strftime("%Y_%m_%d-%H.%M.%S")
-    
-    # trial counter
-    trial = 0
-    
-    conditions = [] # vector that will contain exact message sent to arduino to register the conditions played in each trial
-    valid_trial = [] # vector that will contain 1 if the trial was valid or 0 if it wasn't
-    errors = [] # vector that will contain the type of error that ocurred if any did    
-    
-    # generate filename for file that will contain all conditions used in the trial along with the valid_trials vector    
-    filename_block = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-trials" 
-    
-    while (trial < N_trials_per_block):
-        raw_input("Presione Enter para comenzar el trial (%d/%d)" % (trial+1,N_trials_per_block));
-        plt.close(1)
-        plt.close(2)
+try:
+    while (block_counter < N_blocks):
         
-        # generate raw data file 
-        filename_raw = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)+"-raw.dat"
-        f_raw = open(filename_raw,"w+")
-     
-        # generate extracted data file name (will save raw data, stimulus time, feedback time and asynchrony)
-        filename_data = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)
+        condition_vector = [] # vector that will contain the specified condition the correct amount of times (it's important to restart it here!)
+        for i in range(N_trials_per_block_per_cond):
+            condition_vector.append(all_conditions[cond_order_block[block_counter]])
+        # total number of trials per block
+        N_trials_per_block = len(condition_vector) # unlike N_trials_per_block_per_cond this variable will change if a trial goes wrong
+    
+        Stim_conds = [] # vector that will contain all stimulus conditions
+        Fdbk_conds = [] # vector that will contain all feedback conditions
+        for i in range(len(condition_vector)):
+            Stim_conds.append(condition_vector[i][0])
+            Fdbk_conds.append(condition_vector[i][1])
+        
+        # run one block
+        raw_input("Presione Enter para comenzar el bloque (%d/%d)" %  (block_counter+1,N_blocks));
+        
+        # set time for file name
+        timestr = time.strftime("%Y_%m_%d-%H.%M.%S")
+        
+        # trial counter
+        trial = 0
+        
+        conditions = [] # vector that will contain exact message sent to arduino to register the conditions played in each trial
+        valid_trial = [] # vector that will contain 1 if the trial was valid or 0 if it wasn't
+        errors = [] # vector that will contain the type of error that ocurred if any did    
+        
+        # generate filename for file that will contain all conditions used in the trial along with the valid_trials vector    
+        filename_block = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-trials" 
             
-        # wait random number of seconds before actually starting the trial
-        wait = random.randrange(10,20,1)/10.0
-        time.sleep(wait)
-        
-        # define stimulus and feedback condition for this trial
-        Stim = Stim_conds[trial];
-        Resp = Fdbk_conds[trial];
-          
-        # send message with conditions to arduino
-        message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % (Stim, Resp,'B', 3, ISI, n_stim)
-        arduino.write(message)
-        conditions.append(message)
-        #time.sleep(25)            
-
-        # read information from arduino
-        data = []
-        aux = arduino.readline()
-        while (aux[0]!='E'):
-            data.append(aux);
-            f_raw.write(aux); # save raw data
-            aux = arduino.readline();
-
-        
-        # Separates data in type, number and time
-        e_total = len(data)
-        e_type = []
-        e_number = []
-        e_time = []
-        for event in data:
-            e_type.append(event.split()[0])
-            e_number.append(int(event.split()[1]))
-            e_time.append(int(event.split()[2]))
-        
-        # Separates number and time according to if it comes from stimulus or response
-        stim_number = []
-        resp_number = []
-        stim_time = []
-        resp_time = []
-        for events in range(e_total):
-            if e_type[events]=='S':
-                stim_number.append(e_number[events])
-                stim_time.append(e_time[events])
-                
-            if e_type[events]=='R':
-                resp_number.append(e_number[events])
-                resp_time.append(e_time[events])
-    
-        # determine number of stimulus and responses registered
-        N_stim = len(stim_time)
-        N_resp = len(resp_time)
-    
-        # close raw data file    
-        f_raw.close()
-        
-        # ---------------------------------------------------------------
-        # Asynchronies calculation
-    
-        # vector that will contain asynchronies if they are calculated
-        asynchrony = []
-        
-        try: 
-            if N_resp > 0: # if there were any responses
+        while (trial < N_trials_per_block):
+            escape = raw_input('Tipee E para exit gracefully: ')
+            if escape == 'E':
+                raise Escape
+            else:
+                pass
             
-                vec_diff_first_stim = []
-                for i in range(N_stim):
-                    vec_diff_first_stim.append(resp_time[0]-stim_time[i])
+            raw_input("Presione Enter para comenzar el trial (%d/%d)" % (trial+1,N_trials_per_block));
+            plt.close(1)
+            plt.close(2)
+            
+            # generate raw data file 
+            filename_raw = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)+"-raw.dat"
+            f_raw = open(filename_raw,"w+")
+         
+            # generate extracted data file name (will save raw data, stimulus time, feedback time and asynchrony)
+            filename_data = '/home/paula/Tappingduino3/tappingduino-3-master/Datos/S'+next_subject_number+"-"+timestr+"-"+"block"+str(block_counter)+"-"+"trial"+str(trial)
+                
+            # wait random number of seconds before actually starting the trial
+            wait = random.randrange(10,20,1)/10.0
+            time.sleep(wait)
+            
+            # define stimulus and feedback condition for this trial
+            Stim = Stim_conds[trial];
+            Resp = Fdbk_conds[trial];
+              
+            # send message with conditions to arduino
+            message = ";S%c;F%c;N%c;A%d;I%d;n%d;X" % (Stim, Resp,'B', 3, ISI, n_stim)
+            arduino.write(message)
+            conditions.append(message)
+            #time.sleep(25)            
+    
+            # read information from arduino
+            data = []
+            aux = arduino.readline()
+            while (aux[0]!='E'):
+                data.append(aux);
+                f_raw.write(aux); # save raw data
+                aux = arduino.readline();
+    
+            
+            # Separates data in type, number and time
+            e_total = len(data)
+            e_type = []
+            e_number = []
+            e_time = []
+            for event in data:
+                e_type.append(event.split()[0])
+                e_number.append(int(event.split()[1]))
+                e_time.append(int(event.split()[2]))
+            
+            # Separates number and time according to if it comes from stimulus or response
+            stim_number = []
+            resp_number = []
+            stim_time = []
+            resp_time = []
+            for events in range(e_total):
+                if e_type[events]=='S':
+                    stim_number.append(e_number[events])
+                    stim_time.append(e_time[events])
                     
-                first_stim_responded_index = np.argmin(vec_diff_first_stim)
-                first_asynch = min(vec_diff_first_stim)
+                if e_type[events]=='R':
+                    resp_number.append(e_number[events])
+                    resp_time.append(e_time[events])
+        
+            # determine number of stimulus and responses registered
+            N_stim = len(stim_time)
+            N_resp = len(resp_time)
+        
+            # close raw data file    
+            f_raw.close()
+            
+            # ---------------------------------------------------------------
+            # Asynchronies calculation
+        
+            # vector that will contain asynchronies if they are calculated
+            asynchrony = []
+            
+            try: 
+                if N_resp > 0: # if there were any responses
                 
-                vec_diff_last_resp = []
-                for j in range(N_resp):
-                    vec_diff_last_resp.append(resp_time[j]-stim_time[N_stim-1])
+                    # Builds the vector that will contain all time differences between the first response and all stimulus
+                    vec_diff_first_stim = []
+                    for i in range(N_stim):
+                        vec_diff_first_stim.append(resp_time[0]-stim_time[i])
+                        
+                    # Finds the stimulus with minimum time distance (asynchrony) of all (its index and its value)
+                    first_stim_responded_index = np.argmin(vec_diff_first_stim)
+                    first_asynch = min(vec_diff_first_stim)
+              
+                    # Same for last stimulus: builds a vector with all differences between that and all responses and then finds the minimum asynchrony (index and value)
+                    vec_diff_last_resp = []
+                    for j in range(N_resp):
+                        vec_diff_last_resp.append(resp_time[j]-stim_time[N_stim-1])
+                        
+                    last_resp_index = np.argmin(vec_diff_last_resp)
+                    last_asynch = min(vec_diff_last_resp)
                     
-                last_resp_index = np.argmin(vec_diff_last_resp)
-                last_asynch = min(vec_diff_last_resp)
-                
-                if abs(first_asynch)<200:
-                    pass
-                else:
-                    print('Error tipo NFR')
-                    errors.append('NoFirstResp')
-                    raise Error 
-                
-                if abs(last_asynch)<200:
-                    pass;
-                else:
-                    print('Error tipo NLR')
-                    errors.append('NoLastResp')
-                    raise Error 
-                            
-                
-                # new vectors of stimulus and responses that only contain those that have a pair of the other type        
-                stim_paired = stim_time[first_stim_responded_index:N_stim]
-                resp_paired = resp_time[0:(last_resp_index+1)]
-                N_stim_paired = len(stim_paired)
-                N_resp_paired = len(resp_paired)
-                
-                if N_stim_paired == N_resp_paired:
-                                      
+                    # Checks if the first pair stim&resp has an asynchrony minor to 200us. If not, raises and error
+                    if abs(first_asynch)<200:
+                        pass
+                    else:
+                        print('Error tipo NFR')
+                        errors.append('NoFirstResp')
+                        raise Error 
                     
-                    # Calculate and save asynchronies
-                    for k in range(N_stim_paired):
-                        diff = resp_paired[k]-stim_paired[k]
-                        if abs(diff)<200:
+                    # Checks if the last pair stim&resp has an asynchrony minor to 200us. If not, raises and error
+                    if abs(last_asynch)<200:
+                        pass;
+                    else:
+                        print('Error tipo NLR')
+                        errors.append('NoLastResp')
+                        raise Error 
+                                
+                    
+                    # new vectors of stimulus and responses that only contain those that have a pair of the other type        
+                    stim_paired = stim_time[first_stim_responded_index:N_stim]
+                    resp_paired = resp_time[0:(last_resp_index+1)]
+                    N_stim_paired = len(stim_paired)
+                    N_resp_paired = len(resp_paired)
+                    
+                    if N_stim_paired == N_resp_paired:
+                        
+                        # Calculate and save asynchronies
+                        for k in range(N_stim_paired):
+                            diff = resp_paired[k]-stim_paired[k]
                             asynchrony.append(diff)
-                        else:
-                            print('Error tipo OOT')
-                            errors.append('OutOfThreshold')
-                            raise Error
                             
-                             
-                    # if the code got here, then the trial is valid!:
-                    valid_trial.append(1)
-                    errors.append('NoError') 
-                    
-                #==============================================================================
-                # Plot all pair of stimulus and feedback
-#                    plt.figure(1)
-#                    my_labels = {"stim" : "Stimulus", "resp" : "Response"}
-#                    for j in range(N_stim):
-#                        plt.axvline(x=stim_time[j],color='b',linestyle='dashed',label=my_labels["stim"])
-#                        my_labels["stim"] = "_nolegend_"
-#                    
-#                    for k in range(N_resp):
-#                        plt.axvline(x=resp_time[k],color='r',label=my_labels["resp"])
-#                        my_labels["resp"] = "_nolegend_"
-#                    
-#                # Put a yellow star on the stimulus that have a paired response.
-#                    for j in range(N_stim_paired):
-#                        plt.plot(stim_paired[j],0.5,'*',color='y')
-#                        
-#                    plt.axis([min(stim_time)-50,max(resp_time)+50,0,1])
-#                      
-#                    plt.xlabel('Tiempo[ms]',fontsize=12)
-#                    plt.ylabel(' ')
-#                    plt.grid()    
-#                    plt.legend(fontsize=12)
-                    
-                #==============================================================================
-           
-                #==============================================================================
-                # Plot asynchronies
-#                    plt.figure(2)
-#                    plt.plot(asynchrony,'.-')
-#                    plt.xlabel('# beep',fontsize=12)
-#                    plt.ylabel('Asynchrony[ms]',fontsize=12)
-#                    plt.grid()    
-                #==============================================================================
-                           
-                else:
-                    if N_stim_paired > N_resp_paired: # if subject skipped an stimuli
-                        # trial is not valid! then:
-                        print('Error tipo SS')
-                        errors.append('SkipStim')
-                    else: # if there's too many responses
-                        # trial is not valid! then:
-                        print('Error tipo TMR')
-                        errors.append('TooManyResp')
-                    
-                    raise Error
-                    
-                      
-            else: # if there were no responses
-                # trial is not valid! then:
-                print('Error tipo NR')
-                errors.append('NoResp')  
-                raise Error
-             
+                        for k in range(len(asynchrony)):    
+                            if abs(asynchrony[k])<200:
+                                pass
+                            else:
+                                print('Error tipo OOT')
+                                errors.append('OutOfThreshold')
+                                raise Error
+                                
+                                 
+                        # if the code got here, then the trial is valid!:
+                        valid_trial.append(1)
+                        errors.append('NoError') 
+                        
+                    #==============================================================================
+                     #Plot all pair of stimulus and feedback
+                        plt.figure(1)
+                        my_labels = {"stim" : "Stimulus", "resp" : "Response"}
+                        for j in range(N_stim):
+                            plt.axvline(x=stim_time[j],color='b',linestyle='dashed',label=my_labels["stim"])
+                            my_labels["stim"] = "_nolegend_"
+                        
+                        for k in range(N_resp):
+                            plt.axvline(x=resp_time[k],color='r',label=my_labels["resp"])
+                            my_labels["resp"] = "_nolegend_"
+                        
+                    # Put a yellow star on the stimulus that have a paired response.
+                        for j in range(N_stim_paired):
+                            plt.plot(stim_paired[j],0.5,'*',color='y')
+                            
+                        plt.axis([min(stim_time)-50,max(resp_time)+50,0,1])
+                          
+                        plt.xlabel('Tiempo[ms]',fontsize=12)
+                        plt.ylabel(' ')
+                        plt.grid()    
+                        plt.legend(fontsize=12)
+                        
+                    #==============================================================================
                
-        except (Error):
-            # trial is not valid! then:
-            valid_trial.append(0)
-                
-            # appends conditions for this trial at the end of the conditions vectors, so that it can repeat at the end
-            Stim_conds.append(Stim_conds[trial])
-            Fdbk_conds.append(Fdbk_conds[trial])
-          
-            # add 1 to number of trials per block since will have to repeat one
-            N_trials_per_block = N_trials_per_block + 1;
-
-        # SAVE DATA FROM TRIAL (VALID OR NOT)
-        np.savez_compressed(filename_data, raw=data, stim=stim_time, resp=resp_time, asynch=asynchrony)
+                    #==============================================================================
+                    # Plot asynchronies
+                        plt.figure(2)
+                        plt.plot(asynchrony,'.-')
+                        plt.xlabel('# beep',fontsize=12)
+                        plt.ylabel('Asynchrony[ms]',fontsize=12)
+                        plt.grid()    
+                    #==============================================================================
+                               
+                    else:
+                        if N_stim_paired > N_resp_paired: # if subject skipped an stimuli
+                            # trial is not valid! then:
+                            print('Error tipo SS')
+                            errors.append('SkipStim')
+                        else: # if there's too many responses
+                            # trial is not valid! then:
+                            print('Error tipo TMR')
+                            errors.append('TooManyResp')
+                        
+                        raise Error
+                        
+                          
+                else: # if there were no responses
+                    # trial is not valid! then:
+                    print('Error tipo NR')
+                    errors.append('NoResp')  
+                    raise Error
+                 
+                   
+            except (Error):
+                # trial is not valid! then:
+                valid_trial.append(0)
+                    
+                # appends conditions for this trial at the end of the conditions vectors, so that it can repeat at the end
+                Stim_conds.append(Stim_conds[trial])
+                Fdbk_conds.append(Fdbk_conds[trial])
+              
+                # add 1 to number of trials per block since will have to repeat one
+                N_trials_per_block = N_trials_per_block + 1;
+    
+            # SAVE DATA FROM TRIAL (VALID OR NOT)
+            np.savez_compressed(filename_data, raw=data, stim=stim_time, resp=resp_time, asynch=asynchrony)
+            
+            # go to next trial
+            trial = trial + 1;
+    #==============================================================================
+    #         # If you want to show plots for each trial
+    #         plt.show(block=False)
+    #         plt.show()
+    #         plt.pause(0.5)
+    #               
+    #==============================================================================
+    
+        print("Fin del bloque!")
+    
+        # ask subject what condition of stimulus and responses considers he/she heard
+        stim_subject_percep = raw_input("Considera que el estimulo llegó por audio izquierdo(L), derecho(R) o ambos(B)?") 
+        fdbk_subject_percep = raw_input("Considera que su respuesta llegó por audio izquierdo(L), derecho(R) o ambos(B)?") 
+        block_cond_subject_percep = [stim_subject_percep, fdbk_subject_percep]
         
-        # go to next trial
-        trial = trial + 1;
-#==============================================================================
-#         # If you want to show plots for each trial
-#         plt.show(block=False)
-#         plt.show()
-#         plt.pause(0.5)
-#               
-#==============================================================================
-
-    print("Fin del bloque!")
-
-    # ask subject what condition of stimulus and responses considers he/she heard
-    stim_subject_percep = raw_input("Considera que el estimulo llegó por audio izquierdo(L), derecho(R) o ambos(B)?") 
-    fdbk_subject_percep = raw_input("Considera que su respuesta llegó por audio izquierdo(L), derecho(R) o ambos(B)?") 
-    block_cond_subject_percep = [stim_subject_percep, fdbk_subject_percep]
-    
     # SAVE DATA FROM BLOCK (VALID AND INVALID TRIALS AND THEIR CONDITIONS)    
-    np.savez_compressed(filename_block,trials=valid_trial,conditions=conditions,errors=errors,subject_percept=block_cond_subject_percep)
+        np.savez_compressed(filename_block,trials=valid_trial,conditions=conditions,errors=errors,subject_percept=block_cond_subject_percep)
+        
+        # go to next block
+        block_counter = block_counter +1;
     
-    # go to next block
-    block_counter = block_counter +1;
+    print("Fin del experimento!")
 
-print("Fin del experimento!")
+except(Escape):
+        np.savez_compressed(filename_data, raw=data, stim=stim_time, resp=resp_time, asynch=asynchrony)
+        np.savez_compressed(filename_block,trials=valid_trial,conditions=conditions,errors=errors,subject_percept=block_cond_subject_percep)
+        print("Saliste gracefully")

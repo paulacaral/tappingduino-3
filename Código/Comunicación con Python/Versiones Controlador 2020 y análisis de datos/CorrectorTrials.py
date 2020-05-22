@@ -7,14 +7,12 @@ Created on Tue Mar 17 11:58:54 2020
 
 
 import numpy as np
-import matplotlib.pyplot as plt
-import os
 import glob
 
 #%%
 
 def Corregir_validez_trials(subject_number,block,trial_to_modify,validation,error):
-    filename = glob.glob(r'C:\Users\Paula\Desktop\S'+subject_number+"*-block"+str(block)+"-trials.npz")
+    filename = glob.glob(r'C:\Users\Paula\Documents\Facultad\Tesis de licenciatura\tappingduino 3\Analisis de datos\Experimento Piloto Dic2019\DATOS - Piloto Dic 2019 - CorregidosTrialsFalsosVal\S'+subject_number+"*-block"+str(block)+"-trials.npz")
     filedic = dict(np.load(filename[0]))
     filedic['trials'][trial_to_modify]=validation
     filedic['errors'][trial_to_modify]=error
@@ -30,6 +28,7 @@ def Corregir_validez_trials(subject_number,block,trial_to_modify,validation,erro
     check = raw_input('if modifications are correct, type Y. Else, just click ENTER: ')
     if check == 'Y':
         np.savez(filename[0], **filedic)
+        print('Modifications done')
     else:
         raise
         

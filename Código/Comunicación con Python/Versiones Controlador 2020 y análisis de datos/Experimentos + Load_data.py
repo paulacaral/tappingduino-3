@@ -322,25 +322,25 @@ while (block_counter < N_blocks):
                 #==============================================================================
                 # Plot all pair of stimulus and feedback
 #                    plt.figure(1)
-#                    my_labels = {"stim" : "Stimulus", "resp" : "Response"}
-#                    for j in range(N_stim):
-#                        plt.axvline(x=stim_time[j],color='b',linestyle='dashed',label=my_labels["stim"])
-#                        my_labels["stim"] = "_nolegend_"
-#                    
-#                    for k in range(N_resp):
-#                        plt.axvline(x=resp_time[k],color='r',label=my_labels["resp"])
-#                        my_labels["resp"] = "_nolegend_"
-#                    
-#                # Put a yellow star on the stimulus that have a paired response.
-#                    for j in range(N_stim_paired):
-#                        plt.plot(stim_paired[j],0.5,'*',color='y')
-#                        
-#                    plt.axis([min(stim_time)-50,max(resp_time)+50,0,1])
-#                      
-#                    plt.xlabel('Tiempo[ms]',fontsize=12)
-#                    plt.ylabel(' ')
-#                    plt.grid()    
-#                    plt.legend(fontsize=12)
+                    my_labels = {"stim" : "Stimulus", "resp" : "Response"}
+                    for j in range(N_stim):
+                        plt.axvline(x=stim_time[j],color='b',linestyle='dashed',label=my_labels["stim"])
+                        my_labels["stim"] = "_nolegend_"
+                    
+                    for k in range(N_resp):
+                        plt.axvline(x=resp_time[k],color='r',label=my_labels["resp"])
+                        my_labels["resp"] = "_nolegend_"
+                    
+                # Put a yellow star on the stimulus that have a paired response.
+                    for j in range(N_stim_paired):
+                        plt.plot(stim_paired[j],0.5,'*',color='y')
+                        
+                    plt.axis([min(stim_time)-50,max(resp_time)+50,0,1])
+                      
+                    plt.xlabel('Tiempo[ms]',fontsize=12)
+                    plt.ylabel(' ')
+                    plt.grid()    
+                    plt.legend(fontsize=12)
                     
                 #==============================================================================
            
